@@ -1,0 +1,29 @@
+export *
+extern func memccpy(any*, any*, int, int) : any*
+extern func strcpy(byte*, byte*) : byte*
+extern func strcat(byte*, byte*) : byte*
+extern func strcmp(byte*, byte*) : int
+extern func strcoll(byte*, byte*) : int
+extern func strdup(byte*) : byte*
+extern func strchr(byte*, int) : byte*
+extern func strrchr(byte*, int) : byte*
+extern func strpbrk(byte*, byte*) : byte*
+extern func strstr(byte*, byte*) : byte*
+extern func strtok(byte*, byte*) : byte*
+extern func __strtok_r(byte*, byte*, byte**) : byte*
+extern func strtok_r(byte*, byte*, byte**) : byte*
+extern func strnlen(byte*, int) : int
+extern func strerror(int) : byte*
+extern func strerror_r(int, byte*, int) : int
+extern func __bzero(any*, int)
+extern func bcopy(any*, any*, int)
+extern func bcmp(any*, any*, int) : int
+extern func index(byte*, int) : byte*
+extern func rindex(byte*, int) : byte*
+extern func ffs(int) : int
+extern func strcasecmp(byte*, byte*) : int
+extern func strsep(byte**, byte*) : byte*
+extern func strsignal(int) : byte*
+extern func __stpcpy(byte*, byte*) : byte*
+extern func stpcpy(byte*, byte*) : byte*
+extern func __stpncpy(byte*, byte*, int) : byte*

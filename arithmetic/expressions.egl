@@ -1,0 +1,44 @@
+export *
+
+interface Expression
+{
+    func eval() : double
+}
+
+class BinaryOp (Expression)
+{
+    Expression^ left
+    Expression^ right
+
+    byte op
+
+    func eval() : double
+    {
+        double l = self^.left->eval()
+        double r = self^.right->eval()
+        byte op = self^.op
+
+        if op == `+`; return l + r
+        if op == `-`; return l - r
+        if op == `*`; return l * r
+        if op == `/`; return l / r
+
+        return 0.0
+    }
+}
+
+class Value (Expression)
+{
+    double val
+
+    init(double val)
+    {
+        self->val = val
+    }
+
+    func eval() : double
+    {
+        return self->val
+    }
+}
+

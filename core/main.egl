@@ -1,0 +1,60 @@
+import ../utils/sdl.egl
+import ../arithmetic/lexer.egl
+import ../arithmetic/parser.egl
+
+func test_lexer(byte* text)
+{
+    var lexer = new Lexer(text)
+    var stack = new Stack()
+
+    for lexer->valid()
+    {
+        var tok = lexer->next()
+        stack->pushRef(strdup(lexer->buffer))
+    }
+
+    if lexer->status == Error
+    {
+        puts 'Unknown token'
+    }
+
+    for stack->count > 0
+    {
+        byte *b = stack->popRef()
+        puts b
+        free(b)
+    }
+}
+
+func main(int argc, byte** argv) : int
+{
+    if argc > 1
+    {
+        test_lexer(argv[1])
+        return 0
+    }
+
+    SDL_Init(sh_init_everything())
+
+    var screen = new Surface(800, 600)
+    screen->openAsWindow()
+
+    var rect = new Rect(10, 10, 50, 50)
+
+    for int i = 0; i < 180; i += 1
+    {
+        rect^.x += 4
+        rect^.y += 3
+
+        screen^.clear(no)
+        screen^.fillRect(rect, 255, 255, 255, no)
+        screen^.flip()
+
+        SDL_Delay(1000.0 / 60)
+    }
+
+    SDL_Quit()
+
+    return 0
+}
+

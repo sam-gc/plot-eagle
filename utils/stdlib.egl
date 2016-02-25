@@ -1,0 +1,253 @@
+export *
+typedef byte __u_char
+typedef short __u_short
+typedef int __u_int
+typedef long __u_long
+typedef byte __int8_t
+typedef byte __uint8_t
+typedef short __int16_t
+typedef short __uint16_t
+typedef int __int32_t
+typedef int __uint32_t
+typedef long __int64_t
+typedef long __uint64_t
+typedef long __quad_t
+typedef long __u_quad_t
+typedef long __dev_t
+typedef int __uid_t
+typedef int __gid_t
+typedef long __ino_t
+typedef long __ino64_t
+typedef int __mode_t
+typedef long __nlink_t
+typedef long __off_t
+typedef long __off64_t
+typedef int __pid_t
+extern struct __fsid_t
+{
+    int[2] __val
+}
+typedef __fsid_t __fsid_t
+typedef long __clock_t
+typedef long __rlim_t
+typedef long __rlim64_t
+typedef int __id_t
+typedef long __time_t
+typedef int __useconds_t
+typedef long __suseconds_t
+typedef int __daddr_t
+typedef int __key_t
+typedef int __clockid_t
+typedef any* __timer_t
+typedef long __blksize_t
+typedef long __blkcnt_t
+typedef long __blkcnt64_t
+typedef long __fsblkcnt_t
+typedef long __fsblkcnt64_t
+typedef long __fsfilcnt_t
+typedef long __fsfilcnt64_t
+typedef long __fsword_t
+typedef long __ssize_t
+typedef long __syscall_slong_t
+typedef long __syscall_ulong_t
+typedef __off64_t __loff_t
+typedef __quad_t* __qaddr_t
+typedef byte* __caddr_t
+typedef long __intptr_t
+typedef int __socklen_t
+extern struct div_t
+{
+    int quot
+    int rem
+}
+typedef div_t div_t
+extern struct ldiv_t
+{
+    long quot
+    long rem
+}
+typedef ldiv_t ldiv_t
+extern struct lldiv_t
+{
+    long quot
+    long rem
+}
+typedef lldiv_t lldiv_t
+extern func __ctype_get_mb_cur_max() : int
+extern func atof(byte*) : double
+extern func atoi(byte*) : int
+extern func atol(byte*) : long
+extern func atoll(byte*) : long
+extern func strtod(byte*, byte**) : double
+extern func strtof(byte*, byte**) : double
+extern func strtold(byte*, byte**) : double
+extern func strtol(byte*, byte**, int) : long
+extern func strtoul(byte*, byte**, int) : long
+extern func strtoq(byte*, byte**, int) : long
+extern func strtouq(byte*, byte**, int) : long
+extern func strtoll(byte*, byte**, int) : long
+extern func strtoull(byte*, byte**, int) : long
+extern func l64a(long) : byte*
+extern func a64l(byte*) : long
+typedef __u_char u_char
+typedef __u_short u_short
+typedef __u_int u_int
+typedef __u_long u_long
+typedef __quad_t quad_t
+typedef __u_quad_t u_quad_t
+typedef __fsid_t fsid_t
+typedef __loff_t loff_t
+typedef __ino_t ino_t
+typedef __dev_t dev_t
+typedef __gid_t gid_t
+typedef __mode_t mode_t
+typedef __nlink_t nlink_t
+typedef __uid_t uid_t
+typedef __off_t off_t
+typedef __pid_t pid_t
+typedef __id_t id_t
+typedef __ssize_t ssize_t
+typedef __daddr_t daddr_t
+typedef __caddr_t caddr_t
+typedef __key_t key_t
+typedef __clock_t clock_t
+typedef __time_t time_t
+typedef __clockid_t clockid_t
+typedef __timer_t timer_t
+typedef long ulong
+typedef short ushort
+typedef int uint
+typedef byte int8_t
+typedef short int16_t
+typedef int int32_t
+typedef long int64_t
+typedef byte u_int8_t
+typedef short u_int16_t
+typedef int u_int32_t
+typedef long u_int64_t
+typedef long register_t
+typedef int __sig_atomic_t
+extern struct __sigset_t
+{
+    long[16] __val
+}
+typedef __sigset_t __sigset_t
+typedef __sigset_t sigset_t
+extern struct timespec
+{
+    __time_t tv_sec
+    __syscall_slong_t tv_nsec
+}
+extern struct timeval
+{
+    __time_t tv_sec
+    __suseconds_t tv_usec
+}
+typedef __suseconds_t suseconds_t
+typedef long __fd_mask
+extern struct fd_set
+{
+    __fd_mask[16] __fds_bits
+}
+typedef fd_set fd_set
+typedef __fd_mask fd_mask
+extern func select(int, fd_set*, fd_set*, fd_set*, timeval*) : int
+extern func gnu_dev_major(long) : int
+extern func gnu_dev_minor(long) : int
+extern func gnu_dev_makedev(int, int) : long
+typedef __blksize_t blksize_t
+typedef __blkcnt_t blkcnt_t
+typedef __fsblkcnt_t fsblkcnt_t
+typedef __fsfilcnt_t fsfilcnt_t
+typedef long pthread_t
+extern func random() : long
+extern func srandom(int)
+extern func initstate(int, byte*, int) : byte*
+extern func setstate(byte*) : byte*
+extern struct random_data
+{
+    int32_t* fptr
+    int32_t* rptr
+    int32_t* state
+    int rand_type
+    int rand_deg
+    int rand_sep
+    int32_t* end_ptr
+}
+extern func random_r(random_data*, int32_t*) : int
+extern func srandom_r(int, random_data*) : int
+extern func initstate_r(int, byte*, int, random_data*) : int
+extern func setstate_r(byte*, random_data*) : int
+extern func rand() : int
+extern func srand(int)
+extern func rand_r(int*) : int
+extern func drand48() : double
+extern func erand48(short[3]) : double
+extern func lrand48() : long
+extern func nrand48(short[3]) : long
+extern func mrand48() : long
+extern func jrand48(short[3]) : long
+extern func srand48(long)
+extern func seed48(short[3]) : short*
+extern func lcong48(short[7])
+extern struct drand48_data
+{
+    short[3] __x
+    short[3] __old_x
+    short __c
+    short __init
+    long __a
+}
+extern func drand48_r(drand48_data*, double*) : int
+extern func erand48_r(short[3], drand48_data*, double*) : int
+extern func lrand48_r(drand48_data*, long*) : int
+extern func nrand48_r(short[3], drand48_data*, long*) : int
+extern func mrand48_r(drand48_data*, long*) : int
+extern func jrand48_r(short[3], drand48_data*, long*) : int
+extern func srand48_r(long, drand48_data*) : int
+extern func seed48_r(short[3], drand48_data*) : int
+extern func lcong48_r(short[7], drand48_data*) : int
+extern func free(any*)
+extern func cfree(any*)
+extern func valloc(int) : any*
+extern func posix_memalign(any**, int, int) : int
+extern func aligned_alloc(int, int) : any*
+extern func abort()
+extern func exit(int)
+extern func quick_exit(int)
+extern func _Exit(int)
+extern func getenv(byte*) : byte*
+extern func putenv(byte*) : int
+extern func setenv(byte*, byte*, int) : int
+extern func unsetenv(byte*) : int
+extern func clearenv() : int
+extern func mktemp(byte*) : byte*
+extern func mkstemp(byte*) : int
+extern func mkstemps(byte*, int) : int
+extern func mkdtemp(byte*) : byte*
+extern func system(byte*) : int
+extern func realpath(byte*, byte*) : byte*
+extern func abs(int) : int
+extern func labs(long) : long
+extern func llabs(long) : long
+extern func ecvt(double, int, int*, int*) : byte*
+extern func fcvt(double, int, int*, int*) : byte*
+extern func gcvt(double, int, byte*) : byte*
+extern func qecvt(double, int, int*, int*) : byte*
+extern func qfcvt(double, int, int*, int*) : byte*
+extern func qgcvt(double, int, byte*) : byte*
+extern func ecvt_r(double, int, int*, int*, byte*, int) : int
+extern func fcvt_r(double, int, int*, int*, byte*, int) : int
+extern func qecvt_r(double, int, int*, int*, byte*, int) : int
+extern func qfcvt_r(double, int, int*, int*, byte*, int) : int
+extern func mblen(byte*, int) : int
+extern func mbtowc(int*, byte*, int) : int
+extern func wctomb(byte*, int) : int
+extern func mbstowcs(int*, byte*, int) : int
+extern func wcstombs(byte*, int*, int) : int
+extern func rpmatch(byte*) : int
+extern func getsubopt(byte**, byte**, byte**) : int
+extern func malloc(long) : any*
+extern func memcpy(any*, any*, long) : any*
+extern func realloc(any*, long) : any*
+

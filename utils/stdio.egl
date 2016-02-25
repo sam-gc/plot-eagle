@@ -1,0 +1,219 @@
+export *
+
+typedef byte __u_char
+typedef short __u_short
+typedef int __u_int
+typedef long __u_long
+typedef byte __int8_t
+typedef byte __uint8_t
+typedef short __int16_t
+typedef short __uint16_t
+typedef int __int32_t
+typedef int __uint32_t
+typedef long __int64_t
+typedef long __uint64_t
+typedef long __quad_t
+typedef long __u_quad_t
+typedef long __dev_t
+typedef int __uid_t
+typedef int __gid_t
+typedef long __ino_t
+typedef long __ino64_t
+typedef int __mode_t
+typedef long __nlink_t
+typedef long __off_t
+typedef long __off64_t
+typedef int __pid_t
+extern struct __fsid_t
+{
+    int[2] __val
+}
+typedef __fsid_t __fsid_t
+typedef long __clock_t
+typedef long __rlim_t
+typedef long __rlim64_t
+typedef int __id_t
+typedef long __time_t
+typedef int __useconds_t
+typedef long __suseconds_t
+typedef int __daddr_t
+typedef int __key_t
+typedef int __clockid_t
+typedef any* __timer_t
+typedef long __blksize_t
+typedef long __blkcnt_t
+typedef long __blkcnt64_t
+typedef long __fsblkcnt_t
+typedef long __fsblkcnt64_t
+typedef long __fsfilcnt_t
+typedef long __fsfilcnt64_t
+typedef long __fsword_t
+typedef long __ssize_t
+typedef long __syscall_slong_t
+typedef long __syscall_ulong_t
+typedef __off64_t __loff_t
+typedef __quad_t* __qaddr_t
+typedef byte* __caddr_t
+typedef long __intptr_t
+typedef int __socklen_t
+typedef _IO_FILE FILE
+typedef _IO_FILE __FILE
+extern struct __mbstate_t
+{
+    int __count
+}
+typedef __mbstate_t __mbstate_t
+extern struct _G_fpos_t
+{
+    __off_t __pos
+    __mbstate_t __state
+}
+typedef _G_fpos_t _G_fpos_t
+extern struct _G_fpos64_t
+{
+    __off64_t __pos
+    __mbstate_t __state
+}
+typedef _G_fpos64_t _G_fpos64_t
+typedef any _IO_lock_t
+extern struct _IO_marker
+{
+    _IO_marker* _next
+    _IO_FILE* _sbuf
+    int _pos
+}
+extern struct _IO_FILE
+{
+    int _flags
+    byte* _IO_read_ptr
+    byte* _IO_read_end
+    byte* _IO_read_base
+    byte* _IO_write_base
+    byte* _IO_write_ptr
+    byte* _IO_write_end
+    byte* _IO_buf_base
+    byte* _IO_buf_end
+    byte* _IO_save_base
+    byte* _IO_backup_base
+    byte* _IO_save_end
+    _IO_marker* _markers
+    _IO_FILE* _chain
+    int _fileno
+    int _flags2
+    __off_t _old_offset
+    short _cur_column
+    byte _vtable_offset
+    byte[1] _shortbuf
+    _IO_lock_t* _lock
+    __off64_t _offset
+    any* __pad1
+    any* __pad2
+    any* __pad3
+    any* __pad4
+    int __pad5
+    int _mode
+    byte _unused2
+}
+typedef _IO_FILE _IO_FILE
+typedef [any*, byte*, int : __ssize_t]* __io_read_fn
+typedef [any*, byte*, int : __ssize_t]* __io_write_fn
+typedef [any*, __off64_t*, int : int]* __io_seek_fn
+typedef [any* : int]* __io_close_fn
+extern func __underflow(_IO_FILE*) : int
+extern func __uflow(_IO_FILE*) : int
+extern func __overflow(_IO_FILE*, int) : int
+extern func _IO_getc(_IO_FILE*) : int
+extern func _IO_putc(int, _IO_FILE*) : int
+extern func _IO_feof(_IO_FILE*) : int
+extern func _IO_ferror(_IO_FILE*) : int
+extern func _IO_peekc_locked(_IO_FILE*) : int
+extern func _IO_flockfile(_IO_FILE*)
+extern func _IO_funlockfile(_IO_FILE*)
+extern func _IO_ftrylockfile(_IO_FILE*) : int
+extern func _IO_vfscanf(_IO_FILE*, byte*, int, int*) : int
+extern func _IO_vfprintf(_IO_FILE*, byte*, int) : int
+extern func _IO_padn(_IO_FILE*, int, __ssize_t) : __ssize_t
+extern func _IO_sgetn(_IO_FILE*, any*, int) : int
+extern func _IO_seekoff(_IO_FILE*, __off64_t, int, int) : __off64_t
+extern func _IO_seekpos(_IO_FILE*, __off64_t, int) : __off64_t
+extern func _IO_free_backup_area(_IO_FILE*)
+typedef int va_list
+typedef __off_t off_t
+typedef __ssize_t ssize_t
+typedef _G_fpos_t fpos_t
+extern func remove(byte*) : int
+extern func rename(byte*, byte*) : int
+extern func renameat(int, byte*, int, byte*) : int
+extern func tmpfile() : FILE*
+extern func tmpnam(byte*) : byte*
+extern func tmpnam_r(byte*) : byte*
+extern func tempnam(byte*, byte*) : byte*
+extern func fclose(FILE*) : int
+extern func fflush(FILE*) : int
+extern func fflush_unlocked(FILE*) : int
+extern func fopen(byte*, byte*) : FILE*
+extern func freopen(byte*, byte*, FILE*) : FILE*
+extern func fdopen(int, byte*) : FILE*
+extern func fmemopen(any*, int, byte*) : FILE*
+extern func open_memstream(byte**, int*) : FILE*
+extern func setbuf(FILE*, byte*)
+extern func setvbuf(FILE*, byte*, int, int) : int
+extern func setbuffer(FILE*, byte*, int)
+extern func setlinebuf(FILE*)
+extern func fprintf(FILE*, byte*) : int
+extern func printf(byte*) : int
+extern func sprintf(byte*, byte*) : int
+extern func vdprintf(int, byte*, int) : int
+extern func dprintf(int, byte*) : int
+extern func fscanf(FILE*, byte*) : int
+extern func scanf(byte*) : int
+extern func sscanf(byte*, byte*) : int
+extern func fscanf(FILE*, byte*) : int
+extern func scanf(byte*) : int
+extern func sscanf(byte*, byte*) : int
+extern func fgetc(FILE*) : int
+extern func getc(FILE*) : int
+extern func getchar() : int
+extern func getc_unlocked(FILE*) : int
+extern func getchar_unlocked() : int
+extern func fgetc_unlocked(FILE*) : int
+extern func fputc(int, FILE*) : int
+extern func putc(int, FILE*) : int
+extern func putchar(int) : int
+extern func fputc_unlocked(int, FILE*) : int
+extern func putc_unlocked(int, FILE*) : int
+extern func putchar_unlocked(int) : int
+extern func getw(FILE*) : int
+extern func putw(int, FILE*) : int
+extern func fgets(byte*, int, FILE*) : byte*
+extern func __getdelim(byte**, int*, int, FILE*) : __ssize_t
+extern func getdelim(byte**, int*, int, FILE*) : __ssize_t
+extern func getline(byte**, int*, FILE*) : __ssize_t
+extern func fputs(byte*, FILE*) : int
+extern func ungetc(int, FILE*) : int
+extern func fread(any*, int, int, FILE*) : int
+extern func fwrite(any*, int, int, FILE*) : int
+extern func fread_unlocked(any*, int, int, FILE*) : int
+extern func fwrite_unlocked(any*, int, int, FILE*) : int
+extern func fseek(FILE*, long, int) : int
+extern func ftell(FILE*) : long
+extern func rewind(FILE*)
+extern func fseeko(FILE*, __off_t, int) : int
+extern func ftello(FILE*) : __off_t
+extern func fgetpos(FILE*, fpos_t*) : int
+extern func fsetpos(FILE*, fpos_t*) : int
+extern func clearerr(FILE*)
+extern func feof(FILE*) : int
+extern func ferror(FILE*) : int
+extern func clearerr_unlocked(FILE*)
+extern func feof_unlocked(FILE*) : int
+extern func ferror_unlocked(FILE*) : int
+extern func perror(byte*)
+extern func fileno(FILE*) : int
+extern func fileno_unlocked(FILE*) : int
+extern func popen(byte*, byte*) : FILE*
+extern func pclose(FILE*) : int
+extern func ctermid(byte*) : byte*
+extern func flockfile(FILE*)
+extern func ftrylockfile(FILE*) : int
+extern func funlockfile(FILE*)
