@@ -1,59 +1,13 @@
 import lexer.egl
 import expressions.egl
+import stacks.egl
 import ../utils/string.egl
 import ../utils/stdlib.egl
 
 export *
 
-class Stack
+func blah()
 {
-    any** buffer
-    int buflen
-    int count
-
-    init()
-    {
-        self->buflen = 10
-        self->count = 0
-        self->buffer = malloc(self->buflen * sizeof(any*))
-    }
-
-    destruct()
-    {
-        free(self->buffer)
-    }
-
-    func pushRef(any* ref)
-    {
-        if self->count == self->buflen
-        {
-            self->buflen += 10
-            self->buffer = realloc(self->buffer, self->buflen * sizeof(any*))
-        }
-
-        self->buffer[self->count] = ref
-        self->count += 1
-    }
-
-    func pushVal(int val)
-    {
-        self->pushRef(any*@val)
-    }
-
-    func popRef() : any*
-    {
-        if self->count == 0
-            return nil
-
-        var ref = self->buffer[self->count - 1]
-        self->count -= 1
-
-        return ref
-    }
-
-    func popVal() : int
-    {
-        return int@self->popRef()
-    }
+    0
 }
 
