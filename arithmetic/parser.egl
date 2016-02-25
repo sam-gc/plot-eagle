@@ -14,6 +14,8 @@ func prec(Token t) : int
         return 1
     if t == Mult || t == Div
         return 2
+    if t == ParenL
+        return 100
 
     return 0
 }
@@ -33,11 +35,22 @@ func parse(byte* str) : Expression^
         {
             operands^.push(new Value(atof(lexer^.buffer)))
         }
+        elif tok == ParenR
+        {
+            for operators^.top() != ParenL
+            {
+                var top = operators^.pop()
+                Expression^ a = operands^.pop()
+                Expression^ b = operands^.pop()
+                operands^.push(new BinaryOp(b, a, top))
+            }
+            operators^.pop()
+        }
         else
         {
             var top = operators^.top()
 
-            for prec(tok) <= prec(top)
+            for prec(tok) <= prec(top) && top != ParenL
             {
                 operators^.pop()
                 Expression^ a = operands^.pop()
@@ -48,15 +61,6 @@ func parse(byte* str) : Expression^
             }
 
             operators^.push(tok)
-            -- if prec(tok) > prec(top)
-            -- {
-            --     operators^.push(tok)
-            -- }
-            -- else
-            -- {
-            --     operators^.pop()
-            --     operands^.push(new BinaryOp(operands^.pop(), operands^.pop(), top))
-            -- }
         }
     }
 
