@@ -1,6 +1,7 @@
 export *
 extern func memccpy(any*, any*, int, int) : any*
 extern func strcpy(byte*, byte*) : byte*
+extern func strlen(byte*) : long
 extern func strcat(byte*, byte*) : byte*
 extern func strcmp(byte*, byte*) : int
 extern func strcoll(byte*, byte*) : int

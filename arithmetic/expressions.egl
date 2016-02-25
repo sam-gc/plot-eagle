@@ -1,8 +1,10 @@
+import lexer.egl
 export *
 
 interface Expression
 {
     func eval() : double
+    func render() : byte*
 }
 
 class BinaryOp (Expression)
@@ -10,20 +12,47 @@ class BinaryOp (Expression)
     Expression^ left
     Expression^ right
 
-    byte op
+    Token op
+
+    init(Expression^ left, Expression^ right, Token op)
+    {
+        self->left = left
+        self->right = right
+        self->op = op
+    }
 
     func eval() : double
     {
         double l = self^.left->eval()
         double r = self^.right->eval()
-        byte op = self^.op
+        Token op = self^.op
 
-        if op == `+`; return l + r
-        if op == `-`; return l - r
-        if op == `*`; return l * r
-        if op == `/`; return l / r
+        if op == Plus; return l + r
+        if op == Minus; return l - r
+        if op == Mult; return l * r
+        if op == Div; return l / r
 
         return 0.0
+    }
+
+    func render() : byte*
+    {
+        var l = self^.left^.render()
+        var r = self^.right^.render()
+
+        byte b = 0
+        var op = self^.op
+        if op == Plus; b = `+`
+        if op == Minus; b = `-`
+        if op == Mult; b = `*`
+        if op == Div; b = `/`
+
+        byte* me = malloc(strlen(l) + strlen(r) + 10)
+        sprintf(me, '(%s %c %s)', l, b, r)
+
+        free(l)
+        free(r)
+        return me
     }
 }
 
@@ -39,6 +68,13 @@ class Value (Expression)
     func eval() : double
     {
         return self->val
+    }
+
+    func render() : byte*
+    {
+        byte* mem = malloc(20)
+        sprintf(mem, '%lf', self->val)
+        return mem
     }
 }
 

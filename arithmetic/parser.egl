@@ -6,8 +6,68 @@ import ../utils/stdlib.egl
 
 export *
 
-func blah()
+func prec(Token t) : int
 {
-    0
+    if t == Sentinel
+        return 0
+    if t == Plus || t == Minus
+        return 1
+    if t == Mult || t == Div
+        return 2
+
+    return 0
+}
+
+func parse(byte* str) : Expression^
+{
+    var lexer = new Lexer(str)
+    var operands = new PointerStack()
+    var operators = new TokenStack()
+    operators^.push(Sentinel)
+
+    for lexer^.valid()
+    {
+        var tok = lexer^.next()
+
+        if tok == Number
+        {
+            operands^.push(new Value(atof(lexer^.buffer)))
+        }
+        else
+        {
+            var top = operators^.top()
+
+            for prec(tok) <= prec(top)
+            {
+                operators^.pop()
+                Expression^ a = operands^.pop()
+                Expression^ b = operands^.pop()
+                operands^.push(new BinaryOp(b, a, top))
+
+                top = operators^.top()
+            }
+
+            operators^.push(tok)
+            -- if prec(tok) > prec(top)
+            -- {
+            --     operators^.push(tok)
+            -- }
+            -- else
+            -- {
+            --     operators^.pop()
+            --     operands^.push(new BinaryOp(operands^.pop(), operands^.pop(), top))
+            -- }
+        }
+    }
+
+    for operators^.top() != Sentinel
+    {
+        Expression^ a = operands^.pop()
+        Expression^ b = operands^.pop()
+
+        operands^.push(new BinaryOp(b, a, operators^.pop()))
+    }
+
+    return operands^.pop()
 }
 

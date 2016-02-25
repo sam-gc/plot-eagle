@@ -26,6 +26,7 @@ enum Token
     Pow
     End
     Invalid
+    Sentinel
 }
 
 class Lexer
@@ -155,12 +156,12 @@ func is_white(byte c) : bool
     return c == ` `
 }
 
-func is_alpha(byte c) : bool
+func is_digit(byte c) : bool
 {
     return c >= `0` && c <= `9`
 }
 
-func is_digit(byte c) : bool
+func is_alpha(byte c) : bool
 {
     if c >= `a` && c <= `z`
         return yes

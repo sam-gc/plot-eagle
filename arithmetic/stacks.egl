@@ -42,6 +42,14 @@ class TokenStack
         self->count -= 1
         return t
     }
+
+    func top() : Token
+    {
+        if self->count == 0
+            return Invalid
+
+        return self->buffer[self->count - 1]
+    }
 }
 
 class PointerStack

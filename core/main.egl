@@ -4,35 +4,8 @@ import ../arithmetic/parser.egl
 
 func test_lexer(byte* text)
 {
-    var lexer = new Lexer(text)
-    var stack = new PointerStack()
-    var toks  = new TokenStack()
-
-    for lexer->valid()
-    {
-        var tok = lexer->next()
-        stack->push(new byte*(strdup(lexer->buffer)))
-        toks->push(tok)
-    }
-
-    if lexer->status == Error
-    {
-        puts 'Unknown token'
-    }
-
-    for stack->count > 0
-    {
-        byte*^ c = stack->pop()
-        puts c^
-        free(c^)
-    }
-
-    for toks->count > 0
-    {
-        var t = toks->pop()
-        if t == Mult
-            puts 'Mult!'
-    }
+    var exp = parse(text)
+    puts exp^.eval()
 }
 
 func main(int argc, byte** argv) : int
