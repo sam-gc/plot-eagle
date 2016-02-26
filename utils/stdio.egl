@@ -161,8 +161,8 @@ extern func setvbuf(FILE*, byte*, int, int) : int
 extern func setbuffer(FILE*, byte*, int)
 extern func setlinebuf(FILE*)
 extern func fprintf(FILE*, byte*) : int
-extern func printf(byte*) : int
-extern func sprintf(byte*, byte*) : int
+extern func printf(byte* ...) : int
+extern func sprintf(byte*, byte* ...) : int
 extern func vdprintf(int, byte*, int) : int
 extern func dprintf(int, byte*) : int
 extern func fscanf(FILE*, byte*) : int

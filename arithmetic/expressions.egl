@@ -7,6 +7,42 @@ interface Expression
     func render() : byte*
 }
 
+class UnaryOp(Expression)
+{
+    Expression^ value
+
+    Token op
+
+    init(Expression^ value, Token op)
+    {
+        self^.value = value
+        self^.op = op
+    }
+
+    func eval() : double
+    {
+        double v = self^.value^.eval()
+        Token op = self^.op
+
+        if op == UMinus; return 0-v
+        return 0
+    }
+
+    func render() : byte*
+    {
+        var v = self^.value^.render()
+        byte b = 0
+        var op = self^.op
+        if op == UMinus; b = `-`
+
+        byte* me = malloc(strlen(v) + 10)
+        sprintf(me, '%c%s', b, v)
+
+        free(v)
+        return me
+    }
+}
+
 class BinaryOp (Expression)
 {
     Expression^ left

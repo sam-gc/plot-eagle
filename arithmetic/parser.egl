@@ -6,18 +6,28 @@ import ../utils/stdlib.egl
 
 export *
 
-func prec(Token t) : int
+struct ParserHelper
 {
-    if t == Sentinel
-        return 0
-    if t == Plus || t == Minus
-        return 1
-    if t == Mult || t == Div
-        return 2
-    if t == ParenL
-        return 100
+    PointerStack^ operands
+    TokenStack^   operators
+    Token         tok
+}
 
-    return 0
+enum Precedence
+{
+    Zero
+    VeryLow
+    Low
+    Medium
+    High
+    VeryHigh
+    ExtremelyHigh
+}
+
+enum Associativity
+{
+    Left
+    Right
 }
 
 func parse(byte* str) : Expression^
@@ -25,53 +35,116 @@ func parse(byte* str) : Expression^
     var lexer = new Lexer(str)
     var operands = new PointerStack()
     var operators = new TokenStack()
+
+    ParserHelper h
+    h.operators = operators
+    h.operands = operands
+
     operators^.push(Sentinel)
 
     for lexer^.valid()
     {
         var tok = lexer^.next()
+        h.tok = tok
 
         if tok == Number
-        {
             operands^.push(new Value(atof(lexer^.buffer)))
-        }
         elif tok == ParenR
-        {
-            for operators^.top() != ParenL
-            {
-                var top = operators^.pop()
-                Expression^ a = operands^.pop()
-                Expression^ b = operands^.pop()
-                operands^.push(new BinaryOp(b, a, top))
-            }
-            operators^.pop()
-        }
+            ph_paren_r(&h)
         else
-        {
-            var top = operators^.top()
-
-            for prec(tok) <= prec(top) && top != ParenL
-            {
-                operators^.pop()
-                Expression^ a = operands^.pop()
-                Expression^ b = operands^.pop()
-                operands^.push(new BinaryOp(b, a, top))
-
-                top = operators^.top()
-            }
-
-            operators^.push(tok)
-        }
+            ph_handle_infix(&h)
     }
 
     for operators^.top() != Sentinel
     {
-        Expression^ a = operands^.pop()
-        Expression^ b = operands^.pop()
-
-        operands^.push(new BinaryOp(b, a, operators^.pop()))
+        ph_map_operator(&h)
     }
 
     return operands^.pop()
+}
+
+-*
+ * ph_ for parser_handle...
+ * Deal with the right parenthesis
+ *-
+func ph_paren_r(ParserHelper* h)
+{
+    for h^.operators^.top() != ParenL
+    {
+        ph_map_operator(h)
+    }
+    h^.operators^.pop()
+}
+
+-*
+ * Deal with infix operators (assumes left associative)
+ *-
+func ph_handle_infix(ParserHelper* h)
+{
+    var operators = h^.operators
+    var operands  = h^.operands
+    var tok = h^.tok
+
+    var top = operators^.top()
+
+    for ph_needs_pop(tok, top) && top != ParenL
+    {
+        ph_map_operator(h)
+        top = operators^.top()
+    }
+
+    operators^.push(tok)
+}
+
+func ph_map_operator(ParserHelper* h)
+{
+    var top = h^.operators^.pop()
+    if is_binary_operator(top) -- If we are dealing with a binary operator
+    {
+        Expression^ a = h^.operands^.pop()
+        Expression^ b = h^.operands^.pop()
+        h^.operands^.push(new BinaryOp(b, a, top))
+    }
+    elif is_unary_operator(top)
+    {
+        Expression^ a = h^.operands^.pop()
+        h^.operands^.push(new UnaryOp(a, top))
+    }
+}
+
+func ph_needs_pop(Token tok, Token top) : bool
+{
+    if ph_associativity(tok) == Left
+        return prec(tok) <= prec(top)
+
+    return prec(tok) < prec(top)
+}
+
+func ph_associativity(Token tok) : Associativity
+{
+    if tok == UMinus
+        return Right
+
+    return Left
+}
+
+-*
+ * Returns a relative precedence associated with
+ * the given token
+ *-
+func prec(Token t) : Precedence
+{
+    if t == Sentinel
+        return Zero
+    if t == Plus || t == Minus
+        return Low
+    if t == Mult || t == Div
+        return Medium
+    if t == UMinus
+        return VeryHigh
+    if t == ParenL
+        return ExtremelyHigh
+
+    return Zero
 }
 
