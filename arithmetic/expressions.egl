@@ -1,6 +1,8 @@
 import lexer.egl
 export *
 
+extern func pow(double, double) : double
+
 interface Expression
 {
     func eval() : double
@@ -67,6 +69,7 @@ class BinaryOp (Expression)
         if op == Minus; return l - r
         if op == Mult; return l * r
         if op == Div; return l / r
+        if op == Pow; return pow(l, r)
 
         return 0.0
     }

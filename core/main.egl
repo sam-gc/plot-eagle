@@ -1,11 +1,12 @@
 import ../utils/sdl.egl
+import ../utils/misc.egl
 import ../arithmetic/lexer.egl
 import ../arithmetic/parser.egl
 
 func test_lexer(byte* text)
 {
     var exp = parse(text)
-    puts exp^.eval()
+    pprint(exp^.eval())
 }
 
 func main(int argc, byte** argv) : int

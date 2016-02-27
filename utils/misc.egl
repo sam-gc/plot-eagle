@@ -1,0 +1,13 @@
+import stdio.egl
+
+export *
+
+extern func fabs(double) : double
+
+func pprint(double d)
+{
+    if fabs(d) > 1.0e9 || fabs(d) < 1.0e-4 
+        printf('%.8e\n', d)
+    else
+        printf('%lf\n', d)
+}

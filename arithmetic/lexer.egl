@@ -93,10 +93,18 @@ class Lexer
     func handleNumber() : Token
     {
         int start = self->pos
+        bool seen_dot = no
+        bool seen_e   = no
+        byte last = ` `
         for self->valid() && (is_digit(self->c()) ||
-                              self->c() == `.` || self->c() == `e` ||
-                              self->c() == `-`) -- TODO: This last one is a bug (5-1)...
+                             (self->c() == `.` && !seen_dot) ||
+                             (self->c() == `e` && !seen_e) ||
+                             (self->c() == `-` && last == `e`))
         {
+            if   self->c() == `.`; seen_dot = yes
+            elif self->c() == `e`; seen_e   = yes
+            
+            last = self->c()
             self->bump()
         }
 
@@ -137,7 +145,7 @@ class Lexer
             return (self->prev = self->handleSimpleToken())
         }
 
-        if is_digit(self->c())
+        if is_digit(self->c()) || self->c() == `.`
         {
             return (self->prev = self->handleNumber())
         }
@@ -161,6 +169,8 @@ func is_simple_token(byte c) : bool
     if c == `+` || c == `-`
         return yes
     if c == `*` || c == `/`
+        return yes
+    if c == `^`
         return yes
 
     return no
@@ -189,6 +199,8 @@ func is_binary_operator(Token t) : bool
         return yes
     if t == Mult || t == Div
         return yes
+    if t == Pow
+        return yes
     return no
 }
 
@@ -209,6 +221,7 @@ func map_simple_token(byte c) : Token
     if c == `-`; return Minus
     if c == `*`; return Mult
     if c == `/`; return Div
+    if c == `^`; return Pow
     return Invalid
 }
 

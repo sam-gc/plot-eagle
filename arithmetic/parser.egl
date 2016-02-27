@@ -21,6 +21,7 @@ enum Precedence
     Medium
     High
     VeryHigh
+    VeryVeryHigh
     ExtremelyHigh
 }
 
@@ -122,7 +123,7 @@ func ph_needs_pop(Token tok, Token top) : bool
 
 func ph_associativity(Token tok) : Associativity
 {
-    if tok == UMinus
+    if tok == UMinus || tok == Pow
         return Right
 
     return Left
@@ -142,6 +143,8 @@ func prec(Token t) : Precedence
         return Medium
     if t == UMinus
         return VeryHigh
+    if t == Pow
+        return VeryVeryHigh
     if t == ParenL
         return ExtremelyHigh
 
