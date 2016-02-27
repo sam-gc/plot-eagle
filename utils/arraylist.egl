@@ -1,0 +1,89 @@
+import stdio.egl
+import stdlib.egl
+
+export *
+
+class Arraylist
+{
+    any** items
+    int count
+    int allocated
+
+    init(int size)
+    {
+        self^.allocated = size
+        self^.count = 0
+        self^.items = malloc(size * sizeof(any*))
+    }
+
+    destruct()
+    {
+        for var i = 0; i < self^.count; i += 1
+        {
+            __dec any^@(self^.items[i])
+        }
+
+        free(self^.items)
+    }
+
+    func append(weak any^ val) : Arraylist^
+    {
+        if self^.count == self^.allocated
+        {
+            self^.allocated += 10
+            self^.items = realloc(self^.items, self^.allocated * sizeof(any*))
+        }
+
+        self^.items[self^.count] = any*@val
+        __inc val
+
+        self^.count += 1
+
+        return self
+    }
+
+    func remove(weak any^ val) : Arraylist^
+    {
+        int idx = -1
+        for int i = 0; i < self^.count; i += 1
+        {
+            if self^.items[i] == val
+            {
+                idx = i
+                break
+            }
+        }
+
+        if idx < 0
+            return self
+
+        self^.count -= 1
+        if idx == self^.count
+        {
+            __dec val
+            return self
+        }
+
+        __dec val
+        for int i = idx; i < self^.count; i += 1
+        {
+            self^.items[i] = self^.items[i + 1]
+        }
+        return self
+    }
+
+    func get(int index) : any^
+    {
+        return any^@(self^.items[index])
+    }
+
+    func each((any^, int : bool)^ callback)
+    {
+        for var i = 0; i < self^.count; i += 1
+        {
+            if !callback(any^@(self^.items[i]), i)
+                return
+        }
+    }
+}
+
