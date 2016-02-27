@@ -2,18 +2,25 @@ import ../utils/sdl.egl
 import ../utils/misc.egl
 import ../arithmetic/lexer.egl
 import ../arithmetic/parser.egl
+import ../arithmetic/functions.egl
 
-func test_lexer(byte* text)
+func test_lexer(byte* text, byte* where)
 {
+    WindowInfo winfo
+    fill_winfo(&winfo, 800, 600)
+
     var exp = parse(text)
-    pprint(exp^.eval())
+    var f   = new Function(exp, &winfo)
+    puts f^.values[0]
 }
 
 func main(int argc, byte** argv) : int
 {
     if argc > 1
     {
-        test_lexer(argv[1])
+        byte* where = nil
+        if argc > 2; where = argv[2]
+        test_lexer(argv[1], where)
         return 0
     }
 

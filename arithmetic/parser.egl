@@ -50,6 +50,12 @@ func parse(byte* str) : Expression^
 
         if tok == Number
             operands^.push(new Value(atof(lexer^.buffer)))
+        elif tok == Identifier && !strcmp(lexer^.buffer, 'x')
+        {
+            var val = new Value(0.0)
+            val^.isvar = yes
+            operands^.push(val)
+        }
         elif tok == ParenR
             ph_paren_r(&h)
         else

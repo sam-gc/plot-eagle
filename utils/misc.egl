@@ -4,10 +4,48 @@ export *
 
 extern func fabs(double) : double
 
+struct WindowInfo
+{
+    double xmin; double xmax
+    double ymin; double ymax
+
+    double width; double height
+}
+
 func pprint(double d)
 {
-    if fabs(d) > 1.0e9 || fabs(d) < 1.0e-4 
+    if d != 0.0 && (fabs(d) > 1.0e9 || fabs(d) < 1.0e-4)
         printf('%.8e\n', d)
     else
         printf('%lf\n', d)
 }
+
+func pmap(WindowInfo* winfo, double *x, double *y)
+{
+    if x
+    {
+        var old = x^
+        var perc = old / winfo^.width
+        var span = (winfo^.xmax - winfo^.xmin) * perc
+        x^ = winfo^.xmin + span
+    }
+    
+    if y
+    {
+        var old = y^
+        var perc = old / winfo^.height
+        var span = (winfo^.ymax - winfo^.ymin) * perc
+        y^ = winfo^.ymin + span
+    }
+}
+
+func fill_winfo(WindowInfo* winfo, double width, double height)
+{
+    winfo^.xmin = -40
+    winfo^.xmax = 40
+    winfo^.ymin = -10
+    winfo^.ymax = 10
+    winfo^.height = height
+    winfo^.width = width
+}
+

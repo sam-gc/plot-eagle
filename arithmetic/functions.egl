@@ -1,0 +1,26 @@
+import ../utils/stdlib.egl
+import ../utils/misc.egl
+import expressions.egl
+export *
+
+class Function
+{
+    double* values
+
+    init(Expression^ e, WindowInfo* winfo)
+    {
+        self^.values = malloc(winfo^.width * sizeof(double))
+        for var i = 0; i < winfo^.width; i += 1
+        {
+            double x = i
+            pmap(winfo, &x, nil)
+            self^.values[i] = e^.eval(x)
+        }
+    }
+
+    destruct()
+    {
+        free(self^.values)
+    }
+}
+

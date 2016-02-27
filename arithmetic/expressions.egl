@@ -5,7 +5,7 @@ extern func pow(double, double) : double
 
 interface Expression
 {
-    func eval() : double
+    func eval(double) : double
     func render() : byte*
 }
 
@@ -21,9 +21,9 @@ class UnaryOp(Expression)
         self^.op = op
     }
 
-    func eval() : double
+    func eval(double x) : double
     {
-        double v = self^.value^.eval()
+        double v = self^.value^.eval(x)
         Token op = self^.op
 
         if op == UMinus; return 0-v
@@ -59,10 +59,10 @@ class BinaryOp (Expression)
         self->op = op
     }
 
-    func eval() : double
+    func eval(double x) : double
     {
-        double l = self^.left->eval()
-        double r = self^.right->eval()
+        double l = self^.left->eval(x)
+        double r = self^.right->eval(x)
         Token op = self^.op
 
         if op == Plus; return l + r
@@ -98,14 +98,18 @@ class BinaryOp (Expression)
 class Value (Expression)
 {
     double val
+    bool   isvar
 
     init(double val)
     {
         self->val = val
+        self->isvar = no
     }
 
-    func eval() : double
+    func eval(double x) : double
     {
+        if self->isvar
+            return x
         return self->val
     }
 
