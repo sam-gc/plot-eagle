@@ -104,12 +104,11 @@ class Surface
     }
 }
 
-struct SDL_Color
+struct Color
 {
     byte r
     byte g
     byte b
-    byte unused
 }
 
 struct Event
@@ -156,5 +155,26 @@ func wait_event(Event* e)
 {
     SDL_WaitEvent(e^.buffer)
     e^.type = EventType@e^.buffer[0]
+}
+
+func event_mouse_coords(Event* e, short* x, short* y)
+{
+    byte[2] buf
+    short* bref = any*@(&buf[0])
+    if x
+    {
+        buf[0] = e^.buffer[4]
+        buf[1] = e^.buffer[5]
+
+        x^ = bref^
+    }
+    
+    if y
+    {
+        buf[0] = e^.buffer[6]
+        buf[1] = e^.buffer[7]
+
+        y^ = bref^
+    }
 }
 

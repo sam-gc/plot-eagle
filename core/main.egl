@@ -37,17 +37,21 @@ func main(int argc, byte** argv) : int
     screen^.openAsWindow()
 
     var plot = new Plot(&winfo, screen)
-    plot^.drawAxes()
     plot^.addExpression(parse(argv[1]))
-    plot^.drawFunctions()
-    plot^.commit()
+    plot^.render()
 
     Event event
-    for yes
+    for event.type != Quit
     {
         wait_event(&event)
-        if event.type == Quit
-            break
+
+        if event.type == MouseMotion
+        {
+            short x
+            event_mouse_coords(&event, &x, nil)
+            plot^.mouseX = x
+            plot^.render()
+        }
     }
 
     -*
