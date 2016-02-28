@@ -17,7 +17,7 @@ func test_lexer(byte* text, byte* where)
 
     var exp = parse(text)
     var f   = new Function(exp, &winfo)
-    puts f^.values[0]
+    puts f.values[0]
 }
 
 func main(int argc, byte** argv) : int
@@ -34,11 +34,11 @@ func main(int argc, byte** argv) : int
     fill_winfo(&winfo, 800, 800)
 
     var screen = new Surface(winfo.width, winfo.height)
-    screen^.openAsWindow()
+    screen.openAsWindow()
 
     var plot = new Plot(&winfo, screen)
-    plot^.addExpression(parse(argv[1]))
-    plot^.render()
+    plot.addExpression(parse(argv[1]))
+    plot.render()
 
     Event event
     for event.type != Quit
@@ -49,8 +49,8 @@ func main(int argc, byte** argv) : int
         {
             short x
             event_mouse_coords(&event, &x, nil)
-            plot^.mouseX = x
-            plot^.render()
+            plot.mouseX = x
+            plot.render()
         }
     }
 
@@ -59,12 +59,12 @@ func main(int argc, byte** argv) : int
 
     for int i = 0; i < 180; i += 1
     {
-        rect^.x += 4
-        rect^.y += 3
+        rect.x += 4
+        rect.y += 3
 
-        screen^.clear(no)
-        screen^.fillRect(rect, 255, 255, 255, no)
-        screen^.flip()
+        screen.clear(no)
+        screen.fillRect(rect, 255, 255, 255, no)
+        screen.flip()
 
         SDL_Delay(1000.0 / 60)
     }

@@ -41,20 +41,20 @@ func parse(byte* str) : Expression^
     h.operators = operators
     h.operands = operands
 
-    operators^.push(Sentinel)
+    operators.push(Sentinel)
 
-    for lexer^.valid()
+    for lexer.valid()
     {
-        var tok = lexer^.next()
+        var tok = lexer.next()
         h.tok = tok
 
         if tok == Number
-            operands^.push(new Value(atof(lexer^.buffer)))
-        elif tok == Identifier && !strcmp(lexer^.buffer, 'x')
+            operands.push(new Value(atof(lexer.buffer)))
+        elif tok == Identifier && !strcmp(lexer.buffer, 'x')
         {
             var val = new Value(0.0)
-            val^.isvar = yes
-            operands^.push(val)
+            val.isvar = yes
+            operands.push(val)
         }
         elif tok == ParenR
             ph_paren_r(&h)
@@ -62,12 +62,12 @@ func parse(byte* str) : Expression^
             ph_handle_infix(&h)
     }
 
-    for operators^.top() != Sentinel
+    for operators.top() != Sentinel
     {
         ph_map_operator(&h)
     }
 
-    return operands^.pop()
+    return operands.pop()
 }
 
 -*
@@ -76,11 +76,11 @@ func parse(byte* str) : Expression^
  *-
 func ph_paren_r(ParserHelper* h)
 {
-    for h^.operators^.top() != ParenL
+    for h.operators.top() != ParenL
     {
         ph_map_operator(h)
     }
-    h^.operators^.pop()
+    h.operators.pop()
 }
 
 -*
@@ -88,34 +88,34 @@ func ph_paren_r(ParserHelper* h)
  *-
 func ph_handle_infix(ParserHelper* h)
 {
-    var operators = h^.operators
-    var operands  = h^.operands
-    var tok = h^.tok
+    var operators = h.operators
+    var operands  = h.operands
+    var tok = h.tok
 
-    var top = operators^.top()
+    var top = operators.top()
 
     for ph_needs_pop(tok, top) && top != ParenL
     {
         ph_map_operator(h)
-        top = operators^.top()
+        top = operators.top()
     }
 
-    operators^.push(tok)
+    operators.push(tok)
 }
 
 func ph_map_operator(ParserHelper* h)
 {
-    var top = h^.operators^.pop()
+    var top = h.operators.pop()
     if is_binary_operator(top) -- If we are dealing with a binary operator
     {
-        Expression^ a = h^.operands^.pop()
-        Expression^ b = h^.operands^.pop()
-        h^.operands^.push(new BinaryOp(b, a, top))
+        Expression^ a = h.operands.pop()
+        Expression^ b = h.operands.pop()
+        h.operands.push(new BinaryOp(b, a, top))
     }
     elif is_unary_operator(top)
     {
-        Expression^ a = h^.operands^.pop()
-        h^.operands^.push(new UnaryOp(a, top))
+        Expression^ a = h.operands.pop()
+        h.operands.push(new UnaryOp(a, top))
     }
 }
 

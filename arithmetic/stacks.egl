@@ -11,44 +11,44 @@ class TokenStack
 
     init()
     {
-        self->alloced = 10
-        self->count = 0
-        self->buffer = malloc(sizeof(Token) * self->alloced)
+        self.alloced = 10
+        self.count = 0
+        self.buffer = malloc(sizeof(Token) * self.alloced)
     }
 
     destruct()
     {
-        free(self->buffer)
+        free(self.buffer)
     }
 
     func push(Token t)
     {
-        if self->alloced == self->count
+        if self.alloced == self.count
         {
-            self->alloced += 10
-            self->buffer = realloc(self->buffer, sizeof(Token) * self->alloced)
+            self.alloced += 10
+            self.buffer = realloc(self.buffer, sizeof(Token) * self.alloced)
         }
 
-        self->buffer[self->count] = t
-        self->count += 1
+        self.buffer[self.count] = t
+        self.count += 1
     }
 
     func pop() : Token
     {
-        if self->count == 0
+        if self.count == 0
             return Invalid
 
-        var t = self->buffer[self->count - 1]
-        self->count -= 1
+        var t = self.buffer[self.count - 1]
+        self.count -= 1
         return t
     }
 
     func top() : Token
     {
-        if self->count == 0
+        if self.count == 0
             return Invalid
 
-        return self->buffer[self->count - 1]
+        return self.buffer[self.count - 1]
     }
 }
 
@@ -59,32 +59,32 @@ class PointerStack
 
     init()
     {
-        self->count = 0
+        self.count = 0
     }
 
     func push(any^ val)
     {
         var node = new PointerStackNode
-        node->val = val
-        node->next = self->head
-        self->head = node
-        self->count += 1
+        node.val = val
+        node.next = self.head
+        self.head = node
+        self.count += 1
     }
 
     func pop() : any^
     {
-        if self->count == 0
+        if self.count == 0
             return nil
 
-        self->count -= 1
-        var ref = self->head->val
-        var next = self->head->next
-        self->head = next
+        self.count -= 1
+        var ref = self.head.val
+        var next = self.head.next
+        self.head = next
 
         -- TODO: The following fails
-        -- self->head = self->head->next
+        -- self.head = self.head.next
         -- I believe this is due to the value of
-        -- self->head being decremented before it
+        -- self.head being decremented before it
         -- can be read for the assignment
 
         return ref

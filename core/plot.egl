@@ -18,12 +18,12 @@ class Plot
 
     init(WindowInfo* winfo, Surface^ surface)
     {
-        self^.winfo     = winfo
-        self^.surface   = surface
-        self^.functions = new Arraylist(5)
-        self^.mouseX    = -1
+        self.winfo     = winfo
+        self.surface   = surface
+        self.functions = new Arraylist(5)
+        self.mouseX    = -1
         
-        memset(&self^.backgcol, 0, sizeof(Color))
+        memset(&self.backgcol, 0, sizeof(Color))
     }
 
     func drawAxes()
@@ -31,12 +31,12 @@ class Plot
         double x = 0.0
         double y = 0.0
 
-        unmap(self^.winfo, &x, &y)
-        var xr = new Rect(0, short@y, self^.winfo^.width, 1)
-        var yr = new Rect(short@x, 0, 1, self^.winfo^.height)
+        unmap(self.winfo, &x, &y)
+        var xr = new Rect(0, short@y, self.winfo.width, 1)
+        var yr = new Rect(short@x, 0, 1, self.winfo.height)
 
-        self^.surface^.fillRect(xr, 0, 0, 255, no)
-        self^.surface^.fillRect(yr, 0, 0, 255, no)
+        self.surface.fillRect(xr, 0, 0, 255, no)
+        self.surface.fillRect(yr, 0, 0, 255, no)
     }
 
     func drawFunction(Function^ f)
@@ -44,10 +44,10 @@ class Plot
         SDL_Rect pt
         double last = -1
 
-        for int x in window_x_coords(self^.winfo)
+        for int x in window_x_coords(self.winfo)
         {
-            double y = f^.values[x]
-            unmap(self^.winfo, nil, &y)
+            double y = f.values[x]
+            unmap(self.winfo, nil, &y)
             y = round(y)
             if y > 32767 || y < -32767
                 continue
@@ -56,8 +56,8 @@ class Plot
             pt.y = y
             pt.w = pt.h = 1
 
-            if last >= 0 && !f^.discreet; connect_the_dots(&pt, last)
-            self^.surface^.fillSDL_Rect(&pt, 255, 255, 255, no)
+            if last >= 0 && !f.discreet; connect_the_dots(&pt, last)
+            self.surface.fillSDL_Rect(&pt, 255, 255, 255, no)
 
             last = y
         }
@@ -68,68 +68,87 @@ class Plot
         -- TODO: If we capture `self` in the closure, self will be
         -- prematurely freed... This seems to be totally messed up
         -- weak Plot^ this = self
-        -* self^.functions^.each(func(any^ item, int idx) : bool {
-            this^.drawFunction(item)
+        -* self.functions.each(func(any^ item, int idx) : bool {
+            this.drawFunction(item)
             return yes
         }) *-
 
-        for int i = 0; i < self^.functions^.count; i += 1
+        for int i = 0; i < self.functions.count; i += 1
         {
-            self^.drawFunction(self^.functions^.get(i))
+            self.drawFunction(self.functions.get(i))
         }
     }
 
     func addExpression(Expression^ e)
     {
-        self^.functions^.append(new Function(e, self^.winfo))
+        self.functions.append(new Function(e, self.winfo))
     }
 
     func commit()
     {
-        self^.surface^.flip()
+        self.surface.flip()
     }
 
     func drawCrossHairs()
     {
-        if self^.mouseX < 0
+        if self.mouseX < 0
             return
 
-        for int i = 0; i < self^.functions^.count; i += 1
+        for int i = 0; i < self.functions.count; i += 1
         {
-            Function^ f = self^.functions^.get(i)
-            double y = f^.values[self^.mouseX]
-            unmap(self^.winfo, nil, &y)
-            draw_crosshairs_at(self^.surface, self^.mouseX, y, 0, 255, 255)
+            Function^ f = self.functions.get(i)
+            double y = f.values[self.mouseX]
+            unmap(self.winfo, nil, &y)
+            draw_crosshairs_at(self.surface, self.mouseX, y, 0, 255, 255)
+        }
+    }
+
+    func drawTangents()
+    {
+        if self.mouseX < 0
+            return
+
+        for int i = 0; i < self.functions.count; i += 1
+        {
+            Function^ f = self.functions.get(i)
+
+            double x = self.mouseX
+            pmap(self.winfo, &x, nil)
+
+            var texpr = gen_tangent(f.source, x)
+            var tangent = new Function(texpr, self.winfo)
+            self.drawFunction(tangent)
         }
     }
 
     func clear()
     {
-        var back = new Rect(0, 0, self^.winfo^.width, self^.winfo^.height)
-        var c = self^.backgcol
-        self^.surface^.fillRect(back, c.r, c.g, c.b, no)
+        var back = new Rect(0, 0, self.winfo.width, self.winfo.height)
+        var c = self.backgcol
+        self.surface.fillRect(back, c.r, c.g, c.b, no)
     }
 
     func render()
     {
-        self^.clear()
-        self^.drawAxes()
-        self^.drawFunctions()
-        self^.drawCrossHairs()
-        self^.commit()
+        self.clear()
+        self.drawAxes()
+        self.drawFunctions()
+        self.drawTangents()
+        self.drawCrossHairs()
+        self.commit()
     }
 }
 
 func connect_the_dots(SDL_Rect* pt, double last)
 {
-    if pt^.y == last
+    if pt.y == last
         return
 
-    double x = max(pt^.y, last)
-    double n = min(pt^.y, last)
+    double x = max(pt.y, last)
+    double n = min(pt.y, last)
 
-    pt^.y = n
-    pt^.h = x - n
+    pt.y = n
+    pt.h = x - n
 }
 
 func draw_crosshairs_at(Surface^ s, int x, int y, byte r, byte g, byte b)
@@ -158,10 +177,31 @@ func draw_crosshairs_at(Surface^ s, int x, int y, byte r, byte g, byte b)
     left.w = 5
     left.h = 1
 
-    s^.fillSDL_Rect(&top, r, g, b, no)
-    s^.fillSDL_Rect(&right, r, g, b, no)
-    s^.fillSDL_Rect(&left, r, g, b, no)
-    s^.fillSDL_Rect(&bottom, r, g, b, no)
+    s.fillSDL_Rect(&top, r, g, b, no)
+    s.fillSDL_Rect(&right, r, g, b, no)
+    s.fillSDL_Rect(&left, r, g, b, no)
+    s.fillSDL_Rect(&bottom, r, g, b, no)
 }
 
+func gen_tangent(Expression^ e, double x) : Expression^
+{
+    var resolution = 0.0001
 
+    var back   = e.eval(x - resolution)
+    var front  = e.eval(x + resolution)
+    var center = e.eval(x)
+
+    var slope = (front - back) / (resolution * 2)
+    -- y = mx + b
+    -- b = y - mx
+
+    var yint = center - slope * x
+    
+    var v = new Value(0.0)
+    v.isvar = yes
+
+    var mul = new BinaryOp(new Value(slope), v, Token.Mult)
+    var add = new BinaryOp(mul, new Value(yint), Token.Plus)
+
+    return add
+} 

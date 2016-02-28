@@ -37,15 +37,15 @@ class Rect
 
     init(short x, short y, short w, short h)
     {
-        self^.x = x
-        self^.y = y
-        self^.w = w
-        self^.h = h
+        self.x = x
+        self.y = y
+        self.w = w
+        self.h = h
     }
 
     func raw() : any*
     {
-        return any* @ (&(unwrap self)^.x)
+        return any* @ (&(unwrap self).x)
     }
 }
 
@@ -57,50 +57,50 @@ class Surface
 
     init(int w, int h)
     {
-        self^.w = w
-        self^.h = h
-        self^.surf = nil
+        self.w = w
+        self.h = h
+        self.surf = nil
     }
 
     func raw() : SDL_Surface*
     {
-        return self^.surf
+        return self.surf
     }
 
     func openAsWindow()
     {
-        self^.surf = SDL_SetVideoMode(self^.w, self^.h, 32, sh_hw_surface())
+        self.surf = SDL_SetVideoMode(self.w, self.h, 32, sh_hw_surface())
     }
 
     func fillRect(Rect^ rect, byte r, byte g, byte b, bool flip)
     {
-        self^.fillSDL_Rect(rect^.raw(), r, g, b, flip)
+        self.fillSDL_Rect(rect.raw(), r, g, b, flip)
     }
 
     func fillSDL_Rect(SDL_Rect* rect, byte r, byte g, byte b, bool flip)
     {
-        int col = SDL_MapRGB(self^.surf^.format, r, g, b)
-        SDL_FillRect(self^.surf, rect, col)
+        int col = SDL_MapRGB(self.surf.format, r, g, b)
+        SDL_FillRect(self.surf, rect, col)
 
         if flip
-            SDL_Flip(self^.surf)
+            SDL_Flip(self.surf)
     }
 
     func clear(bool flip)
     {
         SDL_Rect rect
         rect.x = rect.y = 0
-        rect.w = self^.w
-        rect.h = self^.h
+        rect.w = self.w
+        rect.h = self.h
 
-        SDL_FillRect(self^.surf, &rect, SDL_MapRGB(self^.surf^.format, 0, 0, 0))
+        SDL_FillRect(self.surf, &rect, SDL_MapRGB(self.surf.format, 0, 0, 0))
         if flip
-            SDL_Flip(self^.surf)
+            SDL_Flip(self.surf)
     }
 
     func flip()
     {
-        SDL_Flip(self^.surf)
+        SDL_Flip(self.surf)
     }
 }
 
@@ -153,8 +153,8 @@ func sh_hw_surface() : int
 
 func wait_event(Event* e)
 {
-    SDL_WaitEvent(e^.buffer)
-    e^.type = EventType@e^.buffer[0]
+    SDL_WaitEvent(e.buffer)
+    e.type = EventType@e.buffer[0]
 }
 
 func event_mouse_coords(Event* e, short* x, short* y)
@@ -163,16 +163,16 @@ func event_mouse_coords(Event* e, short* x, short* y)
     short* bref = any*@(&buf[0])
     if x
     {
-        buf[0] = e^.buffer[4]
-        buf[1] = e^.buffer[5]
+        buf[0] = e.buffer[4]
+        buf[1] = e.buffer[5]
 
         x^ = bref^
     }
     
     if y
     {
-        buf[0] = e^.buffer[6]
-        buf[1] = e^.buffer[7]
+        buf[0] = e.buffer[6]
+        buf[1] = e.buffer[7]
 
         y^ = bref^
     }

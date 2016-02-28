@@ -5,27 +5,30 @@ export *
 
 class Function
 {
-    double* values
-    bool    discreet
-    bool    ustatic
+    double*     values
+    bool        discreet
+    bool        ustatic
+    Expression^ source
 
     init(Expression^ e, WindowInfo* winfo)
     {
-        self^.values = malloc(winfo^.width * sizeof(double))
-        self^.discreet = no
-        self^.ustatic  = no
+        self.values = malloc(winfo.width * sizeof(double))
+        self.discreet = no
+        self.ustatic  = no
 
-        for var i = 0; i < winfo^.width; i += 1
+        for var i = 0; i < winfo.width; i += 1
         {
             double x = i
             pmap(winfo, &x, nil)
-            self^.values[i] = e^.eval(x)
+            self.values[i] = e.eval(x)
         }
+
+        self.source = e
     }
 
     destruct()
     {
-        free(self^.values)
+        free(self.values)
     }
 }
 

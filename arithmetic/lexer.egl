@@ -40,48 +40,48 @@ class Lexer
 
     init(byte* src)
     {
-        self->src = strdup(src)
-        self->pos = 0
-        self->status = Valid
-        self->buffer = malloc(1000)
-        self->prev = Invalid
+        self.src = strdup(src)
+        self.pos = 0
+        self.status = Valid
+        self.buffer = malloc(1000)
+        self.prev = Invalid
     }
 
     destruct()
     {
-        free(self->buffer)
-        free(self->src)
+        free(self.buffer)
+        free(self.src)
     }
 
     func c() : byte
     {
-        return self->src[self->pos]
+        return self.src[self.pos]
     }
 
     func valid() : bool
     {
-        return self->status == Valid
+        return self.status == Valid
     }
 
     func bump()
     {
-        self->pos += 1
-        if self->c() == 0
-            self->status = Finished
+        self.pos += 1
+        if self.c() == 0
+            self.status = Finished
     }
 
     func handleSimpleToken() : Token
     {
-        byte c = self->c()
-        self->buffer[0] = c
-        self->buffer[1] = 0
-        self->bump()
+        byte c = self.c()
+        self.buffer[0] = c
+        self.buffer[1] = 0
+        self.bump()
 
         if c == `-`
         {
-            if is_binary_operator(self->prev) || self->prev == ParenL ||
-                                                 self->prev == Invalid ||
-                                                 self->prev == UMinus
+            if is_binary_operator(self.prev) || self.prev == ParenL ||
+                                                 self.prev == Invalid ||
+                                                 self.prev == UMinus
             {
                 return UMinus
             }
@@ -92,70 +92,70 @@ class Lexer
 
     func handleNumber() : Token
     {
-        int start = self->pos
+        int start = self.pos
         bool seen_dot = no
         bool seen_e   = no
         byte last = ` `
-        for self->valid() && (is_digit(self->c()) ||
-                             (self->c() == `.` && !seen_dot) ||
-                             (self->c() == `e` && !seen_e) ||
-                             (self->c() == `-` && last == `e`))
+        for self.valid() && (is_digit(self.c()) ||
+                             (self.c() == `.` && !seen_dot) ||
+                             (self.c() == `e` && !seen_e) ||
+                             (self.c() == `-` && last == `e`))
         {
-            if   self->c() == `.`; seen_dot = yes
-            elif self->c() == `e`; seen_e   = yes
+            if   self.c() == `.`; seen_dot = yes
+            elif self.c() == `e`; seen_e   = yes
             
-            last = self->c()
-            self->bump()
+            last = self.c()
+            self.bump()
         }
 
-        int len = self->pos - start
-        memcpy(self->buffer, self->src + start, len)
-        self->buffer[len] = 0
+        int len = self.pos - start
+        memcpy(self.buffer, self.src + start, len)
+        self.buffer[len] = 0
 
         return Number
     }
 
     func handleIdentifier() : Token
     {
-        int start = self->pos
-        for self->valid() && (is_digit(self->c()) || is_alpha(self->c()))
+        int start = self.pos
+        for self.valid() && (is_digit(self.c()) || is_alpha(self.c()))
         {
-            self->bump()
+            self.bump()
         }
 
-        int len = self->pos - start
-        memcpy(self->buffer, self->src + start, len)
-        self->buffer[len] = 0
+        int len = self.pos - start
+        memcpy(self.buffer, self.src + start, len)
+        self.buffer[len] = 0
 
         return Identifier
     }
 
     func next() : Token
     {
-        for self->valid() && is_white(self->c())
+        for self.valid() && is_white(self.c())
         {
-            self->bump()
+            self.bump()
         }
 
-        if !self->valid()
+        if !self.valid()
             return End
 
-        if is_simple_token(self->c())
+        if is_simple_token(self.c())
         {
-            return (self->prev = self->handleSimpleToken())
+            return (self.prev = self.handleSimpleToken())
         }
 
-        if is_digit(self->c()) || self->c() == `.`
+        if is_digit(self.c()) || self.c() == `.`
         {
-            return (self->prev = self->handleNumber())
+            return (self.prev = self.handleNumber())
         }
 
-        if is_alpha(self->c())
+        if is_alpha(self.c())
         {
-            return (self->prev = self->handleIdentifier())
+            return (self.prev = self.handleIdentifier())
         }
         
-        self->status = Error
+        self.status = Error
         return Invalid
     }
 }

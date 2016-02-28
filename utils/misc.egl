@@ -1,4 +1,5 @@
 import stdio.egl
+import ../arithmetic/expressions.egl
 
 export *
 
@@ -25,17 +26,17 @@ func pmap(WindowInfo* winfo, double* x, double* y)
     if x
     {
         var old = x^
-        var perc = old / winfo^.width
-        var span = (winfo^.xmax - winfo^.xmin) * perc
-        x^ = winfo^.xmin + span
+        var perc = old / winfo.width
+        var span = (winfo.xmax - winfo.xmin) * perc
+        x^ = winfo.xmin + span
     }
     
     if y
     {
         var old = y^
-        var perc = old / winfo^.height
-        var span = (winfo^.ymax - winfo^.ymin) * perc
-        y^ = winfo^.ymin + span
+        var perc = old / winfo.height
+        var span = (winfo.ymax - winfo.ymin) * perc
+        y^ = winfo.ymin + span
     }
 }
 
@@ -44,31 +45,31 @@ func unmap(WindowInfo* winfo, double* x, double* y)
     if x
     {
         var old = x^
-        var perc = (old - winfo^.xmin) / (winfo^.xmax - winfo^.xmin)
-        x^ = winfo^.width * perc
+        var perc = (old - winfo.xmin) / (winfo.xmax - winfo.xmin)
+        x^ = winfo.width * perc
     }
 
     if y
     {
         var old = y^
-        var perc = (old - winfo^.ymin) / (winfo^.ymax - winfo^.ymin)
-        y^ = winfo^.height - winfo^.height * perc
+        var perc = (old - winfo.ymin) / (winfo.ymax - winfo.ymin)
+        y^ = winfo.height - winfo.height * perc
     }
 }
 
 func fill_winfo(WindowInfo* winfo, double width, double height)
 {
-    winfo^.xmin = -20
-    winfo^.xmax = 20
-    winfo^.ymin = -20
-    winfo^.ymax = 20
-    winfo^.height = height
-    winfo^.width = width
+    winfo.xmin = -17
+    winfo.xmax = 10
+    winfo.ymin = -20
+    winfo.ymax = 20
+    winfo.height = height
+    winfo.width = width
 }
 
 gen window_x_coords(WindowInfo* winfo) : int
 {
-    for int i = 0; i < winfo^.width; i+= 1
+    for int i = 0; i < winfo.width; i+= 1
     {
         yield i
     }

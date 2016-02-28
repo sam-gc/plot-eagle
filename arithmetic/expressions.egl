@@ -17,24 +17,24 @@ class UnaryOp(Expression)
 
     init(Expression^ value, Token op)
     {
-        self^.value = value
-        self^.op = op
+        self.value = value
+        self.op = op
     }
 
     func eval(double x) : double
     {
-        double v = self^.value^.eval(x)
-        Token op = self^.op
+        double v = self.value.eval(x)
+        Token op = self.op
 
-        if op == UMinus; return 0-v
+        if op == UMinus; return -v
         return 0
     }
 
     func render() : byte*
     {
-        var v = self^.value^.render()
+        var v = self.value.render()
         byte b = 0
-        var op = self^.op
+        var op = self.op
         if op == UMinus; b = `-`
 
         byte* me = malloc(strlen(v) + 10)
@@ -61,9 +61,9 @@ class BinaryOp (Expression)
 
     func eval(double x) : double
     {
-        double l = self^.left->eval(x)
-        double r = self^.right->eval(x)
-        Token op = self^.op
+        double l = self.left->eval(x)
+        double r = self.right->eval(x)
+        Token op = self.op
 
         if op == Plus; return l + r
         if op == Minus; return l - r
@@ -76,11 +76,11 @@ class BinaryOp (Expression)
 
     func render() : byte*
     {
-        var l = self^.left^.render()
-        var r = self^.right^.render()
+        var l = self.left.render()
+        var r = self.right.render()
 
         byte b = 0
-        var op = self^.op
+        var op = self.op
         if op == Plus; b = `+`
         if op == Minus; b = `-`
         if op == Mult; b = `*`
