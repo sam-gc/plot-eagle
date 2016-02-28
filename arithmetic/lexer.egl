@@ -28,6 +28,8 @@ enum Token
     End
     Invalid       -- Generic value; used in several ways
     Sentinel      -- Only used to indicate the bottom of the stack
+
+    Builtin : 100 -- Used to allow pushing the BuiltinFunction enum onto the stack
 }
 
 class Lexer

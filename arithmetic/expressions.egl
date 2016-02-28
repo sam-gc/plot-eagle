@@ -1,7 +1,7 @@
 import lexer.egl
+import ../utils/math.egl
 export *
 
-extern func pow(double, double) : double
 
 interface Expression
 {
@@ -9,7 +9,49 @@ interface Expression
     func render() : byte*
 }
 
-class UnaryOp(Expression)
+enum BuiltinFunction
+{
+    Invalid : 100 -- Start where Token ends
+    Sin
+    Cos
+    Tan
+    ArcSin
+    ArcCos
+    ArcTan
+    Abs
+    Rand
+}
+
+class FunctionCall (Expression)
+{
+    Expression^     value
+    BuiltinFunction f
+
+    init(Expression^ value, BuiltinFunction f)
+    {
+        self.value = value
+        self.f = f
+    }
+
+    func eval(double x) : double
+    {
+        double v = self.value.eval(x)
+        var f = self.f
+
+        if   f == Sin; return sin(v)
+        elif f == Cos; return cos(v)
+        elif f == Tan; return tan(v)
+        elif f == Abs; return fabs(v)
+        return 0
+    }
+
+    func render() : byte*
+    {
+        return nil
+    }
+}
+
+class UnaryOp (Expression)
 {
     Expression^ value
 

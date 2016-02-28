@@ -1,9 +1,9 @@
 import stdio.egl
+import string.egl
+import math.egl
 import ../arithmetic/expressions.egl
 
 export *
-
-extern func fabs(double) : double
 
 struct WindowInfo
 {
@@ -78,10 +78,10 @@ func unmap(WindowInfo* winfo, double* x, double* y)
 
 func fill_winfo(WindowInfo* winfo, double width, double height)
 {
-    winfo.xmin = -17
-    winfo.xmax = 10
-    winfo.ymin = -20
-    winfo.ymax = 20
+    winfo.xmin = -15
+    winfo.xmax = 15
+    winfo.ymin = -15
+    winfo.ymax = 15
     winfo.height = height
     winfo.width = width
 }
@@ -106,5 +106,10 @@ func max(double a, double b) : double
     if a > b
         return a
     return b
+}
+
+func strequ(byte* a, byte* b) : bool
+{
+    return !strcmp(a, b)
 }
 

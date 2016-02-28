@@ -1,5 +1,6 @@
 import ../utils/stdlib.egl
 import ../utils/misc.egl
+import ../utils/sdl.egl
 import expressions.egl
 export *
 
@@ -10,6 +11,7 @@ class Function
     bool        discreet
     bool        ustatic
     Expression^ source
+    Color       color
 
     init(Expression^ e, WindowInfo* winfo)
     {
@@ -26,6 +28,7 @@ class Function
         }
 
         self.source = e
+        self.color.r = self.color.g = self.color.b = 255
     }
 
     destruct()

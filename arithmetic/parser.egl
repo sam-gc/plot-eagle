@@ -3,6 +3,7 @@ import expressions.egl
 import stacks.egl
 import ../utils/string.egl
 import ../utils/stdlib.egl
+import ../utils/misc.egl
 
 export *
 
@@ -11,6 +12,7 @@ struct ParserHelper
     PointerStack^ operands
     TokenStack^   operators
     Token         tok
+    Lexer^        lexer
 }
 
 enum Precedence
@@ -40,6 +42,7 @@ func parse(byte* str) : Expression^
     ParserHelper h
     h.operators = operators
     h.operands = operands
+    h.lexer = lexer
 
     operators.push(Sentinel)
 
@@ -56,6 +59,8 @@ func parse(byte* str) : Expression^
             val.isvar = yes
             operands.push(val)
         }
+        elif tok == Identifier
+            ph_handle_function(&h)
         elif tok == ParenR
             ph_paren_r(&h)
         else
@@ -70,6 +75,23 @@ func parse(byte* str) : Expression^
     return operands.pop()
 }
 
+func ph_handle_function(ParserHelper* h)
+{
+    var buf = h.lexer.buffer
+    var f   = BuiltinFunction.Invalid
+    if   strequ(buf, 'Sin'); f = Sin
+    elif strequ(buf, 'Cos'); f = Cos
+    elif strequ(buf, 'Tan'); f = Tan
+    elif strequ(buf, 'Abs'); f = Abs
+
+    if f == Invalid
+    {
+        0 -- TODO: Error...
+    }
+
+    h.operators.push(Token@f)
+}
+
 -*
  * ph_ for parser_handle...
  * Deal with the right parenthesis
@@ -81,6 +103,13 @@ func ph_paren_r(ParserHelper* h)
         ph_map_operator(h)
     }
     h.operators.pop()
+
+    if h.operators.top() > Builtin -- We have a function on the stack
+    {
+        var val = h.operands.pop()
+        var f   = BuiltinFunction@h.operators.pop()
+        h.operands.push(new FunctionCall(val, f))
+    }
 }
 
 -*

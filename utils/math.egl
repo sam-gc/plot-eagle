@@ -1,0 +1,10 @@
+export *
+
+extern func pow(double, double) : double
+extern func asin(double) : double
+extern func sin(double) : double
+extern func acos(double) : double
+extern func cos(double) : double
+extern func atan(double) : double
+extern func tan(double) : double
+extern func fabs(double) : double

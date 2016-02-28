@@ -56,8 +56,10 @@ class Plot
             pt.y = y
             pt.w = pt.h = 1
 
+            var c = f.color
+
             if last >= 0 && !f.discreet; connect_the_dots(&pt, last)
-            self.surface.fillSDL_Rect(&pt, 255, 255, 255, no)
+            self.surface.fillSDL_Rect(&pt, c.r, c.g, c.b, no)
 
             last = y
         }
