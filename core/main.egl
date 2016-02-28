@@ -38,6 +38,7 @@ func main(int argc, byte** argv) : int
 
     var plot = new Plot(&winfo, screen)
     plot.addExpression(parse(argv[1]))
+    plot.resizeWinfo()
     plot.render()
 
     Event event
@@ -52,23 +53,12 @@ func main(int argc, byte** argv) : int
             plot.mouseX = x
             plot.render()
         }
+        elif event.type == ActiveEvent -- Called when mouse leaves the window
+        {
+            plot.mouseX = -1
+            plot.render()
+        }
     }
-
-    -*
-    var rect = new Rect(10, 10, 50, 50)
-
-    for int i = 0; i < 180; i += 1
-    {
-        rect.x += 4
-        rect.y += 3
-
-        screen.clear(no)
-        screen.fillRect(rect, 255, 255, 255, no)
-        screen.flip()
-
-        SDL_Delay(1000.0 / 60)
-    }
-    *-
 
     SDL_Quit()
 

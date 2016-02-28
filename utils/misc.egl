@@ -40,6 +40,25 @@ func pmap(WindowInfo* winfo, double* x, double* y)
     }
 }
 
+func pspan(WindowInfo* winfo, double* spanX, double* spanY)
+{
+    if spanX
+    {
+        var old = spanX^
+        var perc = old / winfo.width
+        var dif = (winfo.xmax - winfo.xmin) * perc
+        spanX^ = dif
+    }
+
+    if spanY
+    {
+        var old = spanY^
+        var perc = old / winfo.height
+        var dif = (winfo.ymax - winfo.ymin) * perc
+        spanY^ = dif
+    }
+}
+
 func unmap(WindowInfo* winfo, double* x, double* y)
 {
     if x

@@ -6,6 +6,7 @@ export *
 class Function
 {
     double*     values
+    int         vcount
     bool        discreet
     bool        ustatic
     Expression^ source
@@ -13,6 +14,7 @@ class Function
     init(Expression^ e, WindowInfo* winfo)
     {
         self.values = malloc(winfo.width * sizeof(double))
+        self.vcount = winfo.width
         self.discreet = no
         self.ustatic  = no
 
@@ -29,6 +31,30 @@ class Function
     destruct()
     {
         free(self.values)
+    }
+
+    func max() : double
+    {
+        double max = self.values[0]
+        for var i = 1; i < self.vcount; i += 1
+        {
+            if self.values[i] > max
+                max = self.values[i]
+        }
+
+        return max
+    }
+
+    func min() : double
+    {
+        double min = self.values[0]
+        for var i = 1; i < self.vcount; i += 1
+        {
+            if self.values[i] < min
+                min = self.values[i]
+        }
+
+        return min
     }
 }
 

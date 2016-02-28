@@ -84,6 +84,32 @@ class Plot
         self.functions.append(new Function(e, self.winfo))
     }
 
+    func resizeWinfo()
+    {
+        double max = (Function^@self.functions.get(0)).max()
+        double min = (Function^@self.functions.get(0)).min()
+
+        for int i = 1; i < self.functions.count; i += 1
+        {
+            Function^ f = self.functions.get(i)
+            var fmax = f.max()
+            var fmin = f.min()
+
+            if fmax > max; max = fmax
+            if fmin < min; min = fmin
+        }
+
+
+        self.winfo.ymax = max
+        self.winfo.ymin = min
+
+        double yoffset = 30
+        pspan(self.winfo, nil, &yoffset)
+
+        self.winfo.ymax += yoffset
+        self.winfo.ymin -= yoffset
+    }
+
     func commit()
     {
         self.surface.flip()
