@@ -38,10 +38,13 @@ class FunctionCall (Expression)
         double v = self.value.eval(x)
         var f = self.f
 
-        if   f == Sin; return sin(v)
-        elif f == Cos; return cos(v)
-        elif f == Tan; return tan(v)
-        elif f == Abs; return fabs(v)
+        if   f == Sin;    return sin(v)
+        elif f == Cos;    return cos(v)
+        elif f == Tan;    return tan(v)
+        elif f == Abs;    return fabs(v)
+        elif f == ArcSin; return asin(v)
+        elif f == ArcCos; return acos(v)
+        elif f == ArcTan; return atan(v)
         return 0
     }
 

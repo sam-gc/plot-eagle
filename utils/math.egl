@@ -8,3 +8,5 @@ extern func cos(double) : double
 extern func atan(double) : double
 extern func tan(double) : double
 extern func fabs(double) : double
+extern func nan(byte*) : double
+extern func isnan(double) : int

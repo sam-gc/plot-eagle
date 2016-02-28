@@ -83,6 +83,9 @@ func ph_handle_function(ParserHelper* h)
     elif strequ(buf, 'Cos'); f = Cos
     elif strequ(buf, 'Tan'); f = Tan
     elif strequ(buf, 'Abs'); f = Abs
+    elif strequ(buf, 'ArcSin'); f = ArcSin
+    elif strequ(buf, 'ArcCos'); f = ArcCos
+    elif strequ(buf, 'ArcTan'); f = ArcTan
 
     if f == Invalid
     {

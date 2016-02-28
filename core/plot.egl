@@ -1,5 +1,6 @@
 import ../utils/sdl.egl
 import ../utils/stdlib.egl
+import ../utils/math.egl
 import ../utils/misc.egl
 import ../utils/arraylist.egl
 import ../arithmetic/functions.egl
@@ -47,6 +48,9 @@ class Plot
         for int x in window_x_coords(self.winfo)
         {
             double y = f.values[x]
+            if isnan(y)
+                continue
+
             unmap(self.winfo, nil, &y)
             y = round(y)
             if y > 32767 || y < -32767
@@ -126,6 +130,10 @@ class Plot
         {
             Function^ f = self.functions.get(i)
             double y = f.values[self.mouseX]
+
+            if isnan(y)
+                continue
+
             unmap(self.winfo, nil, &y)
             draw_crosshairs_at(self.surface, self.mouseX, y, 0, 255, 255)
         }
@@ -140,12 +148,15 @@ class Plot
         {
             Function^ f = self.functions.get(i)
 
-            double x = self.mouseX
-            pmap(self.winfo, &x, nil)
+            if !isnan(f.values[self.mouseX])
+            {
+                double x = self.mouseX
+                pmap(self.winfo, &x, nil)
 
-            var texpr = gen_tangent(f.source, x)
-            var tangent = new Function(texpr, self.winfo)
-            self.drawFunction(tangent)
+                var texpr = gen_tangent(f.source, x)
+                var tangent = new Function(texpr, self.winfo)
+                self.drawFunction(tangent)
+            }
         }
     }
 
