@@ -8,6 +8,7 @@ extern func SDL_FreeSurface(any*)
 extern func SDL_Quit()
 extern func SDL_FillRect(any*, any*, int) : int
 extern func SDL_MapRGB(any*, byte, byte, byte) : int
+extern func SDL_WaitEvent(any*) : int
 
 struct SDL_Surface
 {
@@ -111,6 +112,36 @@ struct SDL_Color
     byte unused
 }
 
+struct Event
+{
+    EventType type
+    byte[250] buffer
+}
+
+enum EventType
+{
+    NoEvent
+    ActiveEvent
+    KeyDown
+    KeyUp
+    MouseMotion
+    MouseButtonDown
+    MouseButtonUp
+    JoyAxisMotion
+    JoyBallMotion
+    JoyHatMotion
+    JoyButtonDown
+    JoyButtonUp
+    Quit
+    SysWMEvent
+    ReservedA
+    ReservedB
+    VideoResize
+    VideoExpose
+    UserEvent : 24
+    NumEvents : 32
+}
+
 func sh_init_everything() : int
 {
     return 65535
@@ -119,5 +150,11 @@ func sh_init_everything() : int
 func sh_hw_surface() : int
 {
     return 1
+}
+
+func wait_event(Event* e)
+{
+    SDL_WaitEvent(e^.buffer)
+    e^.type = EventType@e^.buffer[0]
 }
 
