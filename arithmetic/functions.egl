@@ -6,10 +6,13 @@ export *
 class Function
 {
     double* values
+    bool    discreet
 
     init(Expression^ e, WindowInfo* winfo)
     {
         self^.values = malloc(winfo^.width * sizeof(double))
+        self^.discreet = no
+
         for var i = 0; i < winfo^.width; i += 1
         {
             double x = i

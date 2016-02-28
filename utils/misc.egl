@@ -74,3 +74,17 @@ gen window_x_coords(WindowInfo* winfo) : int
     }
 }
 
+func min(double a, double b) : double
+{
+    if a < b
+        return a
+    return b
+}
+
+func max(double a, double b) : double
+{
+    if a > b
+        return a
+    return b
+}
+

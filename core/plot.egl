@@ -37,11 +37,11 @@ class Plot
     func drawFunction(Function^ f)
     {
         SDL_Rect pt
+        double last = -1
 
         for int x in window_x_coords(self^.winfo)
         {
             double y = f^.values[x]
-            puts y
             unmap(self^.winfo, nil, &y)
             y = round(y)
             if y > 32767 || y < -32767
@@ -50,7 +50,11 @@ class Plot
             pt.x = x
             pt.y = y
             pt.w = pt.h = 1
+
+            if last >= 0 && !f^.discreet; connect_the_dots(&pt, last)
             self^.surface^.fillSDL_Rect(&pt, 255, 255, 255, no)
+
+            last = y
         }
     }
 
@@ -80,4 +84,17 @@ class Plot
         self^.surface^.flip()
     }
 }
+
+func connect_the_dots(SDL_Rect* pt, double last)
+{
+    if pt^.y == last
+        return
+
+    double x = max(pt^.y, last)
+    double n = min(pt^.y, last)
+
+    pt^.y = n
+    pt^.h = x - n
+}
+
 
