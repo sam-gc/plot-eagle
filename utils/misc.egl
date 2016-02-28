@@ -20,7 +20,7 @@ func pprint(double d)
         printf('%lf\n', d)
 }
 
-func pmap(WindowInfo* winfo, double *x, double *y)
+func pmap(WindowInfo* winfo, double* x, double* y)
 {
     if x
     {
@@ -39,13 +39,38 @@ func pmap(WindowInfo* winfo, double *x, double *y)
     }
 }
 
+func unmap(WindowInfo* winfo, double* x, double* y)
+{
+    if x
+    {
+        var old = x^
+        var perc = (old - winfo^.xmin) / (winfo^.xmax - winfo^.xmin)
+        x^ = winfo^.width * perc
+    }
+
+    if y
+    {
+        var old = y^
+        var perc = (old - winfo^.ymin) / (winfo^.ymax - winfo^.ymin)
+        y^ = winfo^.height - winfo^.height * perc
+    }
+}
+
 func fill_winfo(WindowInfo* winfo, double width, double height)
 {
-    winfo^.xmin = -40
-    winfo^.xmax = 40
-    winfo^.ymin = -10
-    winfo^.ymax = 10
+    winfo^.xmin = -20
+    winfo^.xmax = 20
+    winfo^.ymin = -20
+    winfo^.ymax = 20
     winfo^.height = height
     winfo^.width = width
+}
+
+gen window_x_coords(WindowInfo* winfo) : int
+{
+    for int i = 0; i < winfo^.width; i+= 1
+    {
+        yield i
+    }
 }
 

@@ -1,8 +1,14 @@
+-*
+ * Expect 128,826 bytes lost (my machine) from Valgrind.
+ * This loss is due to SDL, not the Eagle ref counting code.
+ *-
+
 import ../utils/sdl.egl
 import ../utils/misc.egl
 import ../arithmetic/lexer.egl
 import ../arithmetic/parser.egl
 import ../arithmetic/functions.egl
+import plot.egl
 
 func test_lexer(byte* text, byte* where)
 {
@@ -16,19 +22,27 @@ func test_lexer(byte* text, byte* where)
 
 func main(int argc, byte** argv) : int
 {
-    if argc > 1
+    if argc < 2
     {
-        byte* where = nil
-        if argc > 2; where = argv[2]
-        test_lexer(argv[1], where)
+        printf('Usage: %s <expression>\n', argv[0])
         return 0
     }
 
     SDL_Init(sh_init_everything())
 
-    var screen = new Surface(800, 600)
-    screen->openAsWindow()
+    WindowInfo winfo
+    fill_winfo(&winfo, 800, 800)
 
+    var screen = new Surface(winfo.width, winfo.height)
+    screen^.openAsWindow()
+
+    var plot = new Plot(&winfo, screen)
+    plot^.drawAxes()
+    plot^.addExpression(parse(argv[1]))
+    plot^.drawFunctions()
+    plot^.commit()
+
+    -*
     var rect = new Rect(10, 10, 50, 50)
 
     for int i = 0; i < 180; i += 1
@@ -42,7 +56,9 @@ func main(int argc, byte** argv) : int
 
         SDL_Delay(1000.0 / 60)
     }
+    *-
 
+    SDL_Delay(5000)
     SDL_Quit()
 
     return 0

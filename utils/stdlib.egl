@@ -250,4 +250,5 @@ extern func getsubopt(byte**, byte**, byte**) : int
 extern func malloc(long) : any*
 extern func memcpy(any*, any*, long) : any*
 extern func realloc(any*, long) : any*
+extern func round(double) : double
 

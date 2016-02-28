@@ -1,0 +1,83 @@
+import ../utils/sdl.egl
+import ../utils/stdlib.egl
+import ../utils/misc.egl
+import ../utils/arraylist.egl
+import ../arithmetic/functions.egl
+
+export *
+
+extern func __egl_print_count(any^)
+
+class Plot
+{
+    WindowInfo* winfo
+    Surface^ surface
+    Arraylist^ functions
+
+    init(WindowInfo* winfo, Surface^ surface)
+    {
+        self^.winfo = winfo
+        self^.surface = surface
+        self^.functions = new Arraylist(5)
+    }
+
+    func drawAxes()
+    {
+        double x = 0.0
+        double y = 0.0
+
+        unmap(self^.winfo, &x, &y)
+        var xr = new Rect(0, short@y, self^.winfo^.width, 1)
+        var yr = new Rect(short@x, 0, 1, self^.winfo^.height)
+
+        self^.surface^.fillRect(xr, 0, 0, 255, no)
+        self^.surface^.fillRect(yr, 0, 0, 255, no)
+    }
+
+    func drawFunction(Function^ f)
+    {
+        SDL_Rect pt
+
+        for int x in window_x_coords(self^.winfo)
+        {
+            double y = f^.values[x]
+            puts y
+            unmap(self^.winfo, nil, &y)
+            y = round(y)
+            if y > 32767 || y < -32767
+                continue
+
+            pt.x = x
+            pt.y = y
+            pt.w = pt.h = 1
+            self^.surface^.fillSDL_Rect(&pt, 255, 255, 255, no)
+        }
+    }
+
+    func drawFunctions()
+    {
+        -- TODO: If we capture `self` in the closure, self will be
+        -- prematurely freed... This seems to be totally messed up
+        -- weak Plot^ this = self
+        -* self^.functions^.each(func(any^ item, int idx) : bool {
+            this^.drawFunction(item)
+            return yes
+        }) *-
+
+        for int i = 0; i < self^.functions^.count; i += 1
+        {
+            self^.drawFunction(self^.functions^.get(i))
+        }
+    }
+
+    func addExpression(Expression^ e)
+    {
+        self^.functions^.append(new Function(e, self^.winfo))
+    }
+
+    func commit()
+    {
+        self^.surface^.flip()
+    }
+}
+
