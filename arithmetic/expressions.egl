@@ -20,22 +20,32 @@ enum BuiltinFunction
     ArcTan
     Abs
     Rand
+
+    TwoParam : 200 -- Start Two Parameter Functions
+    LogB
 }
 
 class FunctionCall (Expression)
 {
-    Expression^     value
+    Expression^     value1
+    Expression^     value2
     BuiltinFunction f
 
-    init(Expression^ value, BuiltinFunction f)
+    init(BuiltinFunction f, Expression^ value1, Expression^ value2)
     {
-        self.value = value
+        self.value1 = value1
+        self.value2 = value2
         self.f = f
     }
 
     func eval(double x) : double
     {
-        double v = self.value.eval(x)
+        double v = self.value1.eval(x)
+        double v2
+
+        if self.value2
+            v2 = self.value2.eval(x)
+
         var f = self.f
 
         if   f == Sin;    return sin(v)
@@ -45,6 +55,7 @@ class FunctionCall (Expression)
         elif f == ArcSin; return asin(v)
         elif f == ArcCos; return acos(v)
         elif f == ArcTan; return atan(v)
+        elif f == LogB;   return log(v2) / log(v)
         return 0
     }
 
@@ -164,5 +175,12 @@ class Value (Expression)
         sprintf(mem, '%lf', self->val)
         return mem
     }
+}
+
+func arg_count(BuiltinFunction f) : byte
+{
+    if f > TwoParam
+        return 2
+    return 1
 }
 

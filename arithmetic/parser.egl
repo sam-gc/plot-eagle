@@ -63,6 +63,13 @@ func parse(byte* str) : Expression^
             ph_handle_function(&h)
         elif tok == ParenR
             ph_paren_r(&h)
+        elif tok == Comma
+        {
+            for operators.top() != ParenL
+            {
+                ph_map_operator(&h)
+            }
+        }
         else
             ph_handle_infix(&h)
     }
@@ -86,6 +93,7 @@ func ph_handle_function(ParserHelper* h)
     elif strequ(buf, 'ArcSin'); f = ArcSin
     elif strequ(buf, 'ArcCos'); f = ArcCos
     elif strequ(buf, 'ArcTan'); f = ArcTan
+    elif strequ(buf, 'LogB'); f = LogB
 
     if f == Invalid
     {
@@ -109,9 +117,20 @@ func ph_paren_r(ParserHelper* h)
 
     if h.operators.top() > Builtin -- We have a function on the stack
     {
-        var val = h.operands.pop()
         var f   = BuiltinFunction@h.operators.pop()
-        h.operands.push(new FunctionCall(val, f))
+
+        byte args = arg_count(f)
+        Expression^ val1 = nil
+        Expression^ val2 = nil
+
+        val1 = h.operands.pop()
+        if args > 1
+        {
+            val2 = val1
+            val1 = h.operands.pop()
+        }
+
+        h.operands.push(new FunctionCall(f, val1, val2))
     }
 }
 

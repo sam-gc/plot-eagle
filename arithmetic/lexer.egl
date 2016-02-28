@@ -25,6 +25,7 @@ enum Token
     Minus         -- Infix subtraction operator
     UMinus        -- Prefix negation operator
     Pow
+    Comma
     End
     Invalid       -- Generic value; used in several ways
     Sentinel      -- Only used to indicate the bottom of the stack
@@ -172,7 +173,7 @@ func is_simple_token(byte c) : bool
         return yes
     if c == `*` || c == `/`
         return yes
-    if c == `^`
+    if c == `^` || c == `,`
         return yes
 
     return no
@@ -224,6 +225,7 @@ func map_simple_token(byte c) : Token
     if c == `*`; return Mult
     if c == `/`; return Div
     if c == `^`; return Pow
+    if c == `,`; return Comma
     return Invalid
 }
 

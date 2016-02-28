@@ -38,7 +38,7 @@ func main(int argc, byte** argv) : int
 
     var plot = new Plot(&winfo, screen)
     plot.addExpression(parse(argv[1]))
-    plot.resizeWinfo()
+    -- plot.resizeWinfo()
     plot.render()
 
     Event event
