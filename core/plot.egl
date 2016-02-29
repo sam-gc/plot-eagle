@@ -16,6 +16,7 @@ class Plot
     Arraylist^ functions
     int mouseX
     Color backgcol
+    TTF_Font* font
 
     init(WindowInfo* winfo, Surface^ surface)
     {
@@ -23,8 +24,26 @@ class Plot
         self.surface   = surface
         self.functions = new Arraylist(5)
         self.mouseX    = -1
+        self.font      = nil
         
         memset(&self.backgcol, 0, sizeof(Color))
+    }
+
+    destruct()
+    {
+        if self.font
+            TTF_CloseFont(self.font)
+    }
+
+    func useFont(byte* font)
+    {
+        byte[1000] mepath
+        getbinpath(mepath, 1000)
+        byte* path = malloc(strlen(mepath) + strlen(font) + 20)
+        sprintf(path, '%s/fonts/%s', mepath, font)
+
+        self.font = TTF_OpenFont(path, 11)
+        free(path)
     }
 
     func drawAxes()
@@ -38,6 +57,39 @@ class Plot
 
         self.surface.fillRect(xr, 0, 0, 255, no)
         self.surface.fillRect(yr, 0, 0, 255, no)
+    }
+
+    func drawCoords()
+    {
+        if self.mouseX < 0
+            return
+
+        int drawx = self.winfo.width - 10
+
+        for int i = 0; i < self.functions.count; i += 1
+        {
+            Function^ f = self.functions.get(i)
+
+            if !isnan(f.values[self.mouseX])
+            {
+                var y = f.values[self.mouseX]
+                double x = self.mouseX
+                pmap(self.winfo, &x, nil)
+                byte[100] coords
+                coord_print(coords, x, y)
+
+                var c = f.color
+
+                -- extern func ne_render_text(TTF_Font*, byte*, byte, byte, byte) : SDL_Surface*
+                SDL_Surface* surf = ne_render_text(self.font, coords, c.r, c.g, c.b)
+                drawx -= surf.w
+
+                self.surface.blit(surf, drawx, self.winfo.height - 5 - surf.h)
+                drawx -= 10
+
+                SDL_FreeSurface(surf)
+            }
+        }
     }
 
     func drawFunction(Function^ f)
@@ -174,6 +226,7 @@ class Plot
         self.drawFunctions()
         self.drawTangents()
         self.drawCrossHairs()
+        self.drawCoords()
         self.commit()
     }
 }

@@ -1,4 +1,8 @@
+import misc.egl
+
 export *
+
+typedef any TTF_Font
 
 extern func SDL_Init(int)
 extern func SDL_SetVideoMode(int, int, int, int) : SDL_Surface*
@@ -9,6 +13,11 @@ extern func SDL_Quit()
 extern func SDL_FillRect(any*, any*, int) : int
 extern func SDL_MapRGB(any*, byte, byte, byte) : int
 extern func SDL_WaitEvent(any*) : int
+extern func SDL_UpperBlit(any*, any*, any*, any*)
+extern func TTF_Init() : int
+extern func TTF_OpenFont(byte*, int) : TTF_Font*
+extern func TTF_CloseFont(TTF_Font*)
+extern func ne_render_text(TTF_Font*, byte*, byte, byte, byte) : SDL_Surface*
 
 struct SDL_Surface
 {
@@ -96,6 +105,17 @@ class Surface
         SDL_FillRect(self.surf, &rect, SDL_MapRGB(self.surf.format, 0, 0, 0))
         if flip
             SDL_Flip(self.surf)
+    }
+
+    func blit(SDL_Surface* surf, int x, int y)
+    {
+        SDL_Rect dstr
+        dstr.x = x
+        dstr.y = y
+        dstr.w = 0
+        dstr.h = 0
+
+        SDL_UpperBlit(surf, nil, self.surf, &dstr)
     }
 
     func flip()

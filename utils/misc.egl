@@ -5,6 +5,8 @@ import ../arithmetic/expressions.egl
 
 export *
 
+extern func ne_binary_path(byte*, int)
+
 struct WindowInfo
 {
     double xmin; double xmax
@@ -13,12 +15,32 @@ struct WindowInfo
     double width; double height
 }
 
+func print_exponent(double d) : bool
+{
+    return d != 0.0 && (fabs(d) > 1.0e9 || fabs(d) < 1.0e-4)
+}
+
 func pprint(double d)
 {
-    if d != 0.0 && (fabs(d) > 1.0e9 || fabs(d) < 1.0e-4)
+    if print_exponent(d)
         printf('%.8e\n', d)
     else
         printf('%lf\n', d)
+}
+
+func coord_print(byte* buf, double x, double y)
+{
+    byte* fmt = nil
+    if print_exponent(x) && print_exponent(y)
+        fmt = '(%e, %e)'
+    elif print_exponent(x)
+        fmt = '(%e, %lf)'
+    elif print_exponent(y)
+        fmt = '(%lf, %e)'
+    else
+        fmt = '(%lf, %lf)'
+
+    sprintf(buf, fmt, x, y)
 }
 
 func pmap(WindowInfo* winfo, double* x, double* y)
@@ -111,5 +133,16 @@ func max(double a, double b) : double
 func strequ(byte* a, byte* b) : bool
 {
     return !strcmp(a, b)
+}
+
+func getbinpath(byte* buf, int len)
+{
+    ne_binary_path(buf, len)
+    var len = strlen(buf)
+
+    int i
+    for i = len; buf[i] != `/`; i -= 1 { 0; }
+
+    buf[i] = 0
 }
 

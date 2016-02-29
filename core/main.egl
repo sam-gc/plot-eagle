@@ -29,6 +29,7 @@ func main(int argc, byte** argv) : int
     }
 
     SDL_Init(sh_init_everything())
+    TTF_Init()
 
     WindowInfo winfo
     fill_winfo(&winfo, 800, 800)
@@ -38,8 +39,12 @@ func main(int argc, byte** argv) : int
 
     var plot = new Plot(&winfo, screen)
     plot.addExpression(parse(argv[1]))
+
+    if argc > 2
+        plot.addExpression(parse(argv[2]))
     -- plot.resizeWinfo()
     plot.render()
+    plot.useFont('AnonPro.ttf')
 
     Event event
     event.type = UserEvent
