@@ -5,6 +5,8 @@
 
  -- A cool plot: ./plot 1 --color 70,70,70 --static -f "-1" --color 70,70,70 --static -f "Sin(x)" --tangent --aspect --color 255,0,0 --axes-color 255,255,255 --xtick 0.78539816 --ytick 0.5 --window 1500,400 -f "Cos(x)" --tangent --color 255,255,0
 
+ -- Another cool plot: ./plot "LogB(1.5, x)" --color 255,0,0 --tangent -f "LogB(2, x)" --tangent --color 250,136,5 -f "LogB(2.5, x)" --color 255,255,0 --tangent -f "LogB(3, x)" --tangent --color 0,255,0 -f "LogB(3.5, x)" --tangent --color 0,0,255 -f "LogB(4, x)" --color 255,0,255 --tangent --xtick 2.71828182846 --ytick 2.71828182846 --window 1360,720 --xrange -1,10 --yrange -7,6
+
 import ../utils/sdl.egl
 import ../utils/misc.egl
 import ../utils/math.egl

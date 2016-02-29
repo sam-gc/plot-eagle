@@ -78,6 +78,11 @@ class Surface
         return self.surf
     }
 
+    func saveToFile(byte* file)
+    {
+        SDL_SaveBMP(self.surf, file)
+    }
+
     func openAsWindow()
     {
         self.surf = SDL_SetVideoMode(self.w, self.h, 32, sh_hw_surface())

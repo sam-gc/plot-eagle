@@ -289,7 +289,7 @@ class Plot
 
     func saveToFile(byte* filename)
     {
-        SDL_SaveBMP(self.surface.raw(), filename)
+        self.surface.saveToFile(filename)
     }
 
     func render()
