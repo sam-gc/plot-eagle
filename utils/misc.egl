@@ -102,10 +102,10 @@ func unmap(WindowInfo* winfo, double* x, double* y)
 
 func fill_winfo(WindowInfo* winfo, double width, double height)
 {
-    winfo.xmin = -15
-    winfo.xmax = 15
-    winfo.ymin = -15
-    winfo.ymax = 15
+    winfo.xmin = -10
+    winfo.xmax = 10
+    winfo.ymin = -8
+    winfo.ymax = 8
     winfo.height = height
     winfo.width = width
     winfo.aspect = no

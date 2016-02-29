@@ -11,6 +11,14 @@
 #include <SDL/SDL.h>
 #include <SDL/SDL_ttf.h>
 #include <unistd.h>
+#include <stdio.h>
+
+typedef struct
+{
+    char r;
+    char g;
+    char b;
+} Color;
 
 void ne_binary_path(char *buffer, int len)
 {

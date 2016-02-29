@@ -3,6 +3,8 @@
  * This loss is due to SDL, not the Eagle ref counting code.
  *-
 
+ -- A cool plot: ./plot 1 --color 70,70,70 --static -f "-1" --color 70,70,70 --static -f "Sin(x)" --tangent --aspect --color 255,0,0 --axes-color 255,255,255 --xtick 0.78539816 --ytick 0.5 --window 1500,400 -f "Cos(x)" --tangent --color 255,255,0
+
 import ../utils/sdl.egl
 import ../utils/misc.egl
 import ../arithmetic/lexer.egl
@@ -28,6 +30,7 @@ func main(int argc, byte** argv) : int
     screen.openAsWindow()
 
     var plot = new Plot(&winfo, screen)
+    setup_plot(argv, plot)
     -- plot.addExpression(parse(argv[1]))
 
     for int i = 1; i < argc; i += 2
@@ -78,21 +81,45 @@ func build_winfo(byte** args, WindowInfo* winfo)
         var arg = args^
         if strequ(arg, '--aspect')
             winfo.aspect = yes
-        if strequ(arg, '--width')
+        if strequ(arg, '--window')
         {
             args += 1
-            winfo.width = atoi(args^)
-        }
-        if strequ(arg, '--height')
-        {
-            args += 1
-            winfo.height = atoi(args^)
+            int w
+            int h
+            sscanf(args^, '%d,%d', &w, &h)
+            winfo.width = w
+            winfo.height = h
         }
 
         args += 1
     }
 
     sanitize_winfo(winfo)
+}
+
+func setup_plot(byte** args, Plot^ p)
+{
+    for args^
+    {
+        var arg = args^
+        if strequ(arg, '--axes-color')
+        {
+            args += 1
+            read_color(args^, &p.axescol)
+        }
+        elif strequ(arg, '--xtick')
+        {
+            args += 1
+            p.xtick = atof(args^)
+        }
+        elif strequ(arg, '--ytick')
+        {
+            args += 1
+            p.ytick = atof(args^)
+        }
+
+        args += 1
+    }
 }
 
 func build_function(byte** args, int* ct, WindowInfo* winfo) : Function^
@@ -113,11 +140,8 @@ func build_function(byte** args, int* ct, WindowInfo* winfo) : Function^
         {
             args += 1
             read += 1
-            byte r; byte g; byte b
-            sscanf(args^, '%d,%d,%d', &r, &g, &b)
-            f.color.r = r
-            f.color.g = g
-            f.color.b = b
+
+            read_color(args^, &f.color)
         }
         elif strequ(arg, '--discreet')
             f.discreet = yes
@@ -135,4 +159,15 @@ func build_function(byte** args, int* ct, WindowInfo* winfo) : Function^
     return f
 }
 
+func read_color(byte* fmt, Color* c)
+{
+    int r
+    int g
+    int b
+
+    sscanf(fmt, '%d,%d,%d', &r, &g, &b)
+    c.r = r
+    c.g = g
+    c.b = b
+}
 

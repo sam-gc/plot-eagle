@@ -16,7 +16,11 @@ class Plot
     Arraylist^ functions
     int mouseX
     Color backgcol
+    Color axescol
     TTF_Font* font
+
+    double xtick
+    double ytick
 
     init(WindowInfo* winfo, Surface^ surface)
     {
@@ -25,8 +29,10 @@ class Plot
         self.functions = new Arraylist(5)
         self.mouseX    = -1
         self.font      = nil
+        self.xtick = self.ytick = -1
         
         memset(&self.backgcol, 0, sizeof(Color))
+        memset(&self.axescol, 150, sizeof(Color))
     }
 
     destruct()
@@ -55,8 +61,56 @@ class Plot
         var xr = new Rect(0, short@y, self.winfo.width, 1)
         var yr = new Rect(short@x, 0, 1, self.winfo.height)
 
-        self.surface.fillRect(xr, 0, 0, 255, no)
-        self.surface.fillRect(yr, 0, 0, 255, no)
+        var c = self.axescol
+
+        self.surface.fillRect(xr, c.r, c.g, c.b, no)
+        self.surface.fillRect(yr, c.r, c.g, c.b, no)
+
+        if self.xtick >= 0
+        {
+            SDL_Rect r
+            r.y = y - 3
+            r.w = 1
+            r.h = 7
+            var s = self.xtick
+            for double i = s; i < self.winfo.xmax; i += s
+            {
+                var j = i
+                unmap(self.winfo, &j, nil)
+                r.x = j
+                self.surface.fillSDL_Rect(&r, c.r, c.g, c.b, no)
+            }
+            for double i = -s; i > self.winfo.xmin; i -= s
+            {
+                var j = i
+                unmap(self.winfo, &j, nil)
+                r.x = j
+                self.surface.fillSDL_Rect(&r, c.r, c.g, c.b, no)
+            }
+        }
+
+        if self.ytick >= 0
+        {
+            SDL_Rect r
+            r.x = x - 3
+            r.w = 7
+            r.h = 1
+            var s = self.ytick
+            for double i = s; i < self.winfo.ymax; i += s
+            {
+                var j = i
+                unmap(self.winfo, nil, &j)
+                r.y = j
+                self.surface.fillSDL_Rect(&r, c.r, c.g, c.b, no)
+            }
+            for double i = -s; i > self.winfo.ymin; i -= s
+            {
+                var j = i
+                unmap(self.winfo, nil, &j)
+                r.y = j
+                self.surface.fillSDL_Rect(&r, c.r, c.g, c.b, no)
+            }
+        }
     }
 
     func drawCoords()
