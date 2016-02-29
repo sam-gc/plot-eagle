@@ -15,6 +15,9 @@ struct WindowInfo
     double width; double height
 
     bool aspect
+    bool manualy
+
+    byte* outfile
 }
 
 func print_exponent(double d) : bool
@@ -109,6 +112,9 @@ func fill_winfo(WindowInfo* winfo, double width, double height)
     winfo.height = height
     winfo.width = width
     winfo.aspect = no
+    winfo.manualy = no
+    
+    winfo.outfile = nil
 }
 
 func sanitize_winfo(WindowInfo* winfo)

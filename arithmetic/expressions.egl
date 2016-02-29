@@ -1,7 +1,8 @@
 import lexer.egl
 import ../utils/math.egl
+import ../utils/stdlib.egl
+import ../utils/misc.egl
 export *
-
 
 interface Expression
 {
@@ -19,10 +20,14 @@ enum BuiltinFunction
     ArcCos
     ArcTan
     Abs
-    Rand
+    Log
+    Ln
 
     TwoParam : 200 -- Start Two Parameter Functions
     LogB
+    Rand
+    Min
+    Max
 }
 
 class FunctionCall (Expression)
@@ -55,7 +60,12 @@ class FunctionCall (Expression)
         elif f == ArcSin; return asin(v)
         elif f == ArcCos; return acos(v)
         elif f == ArcTan; return atan(v)
+        elif f == Ln;     return log(v)
+        elif f == Log;    return log(v) / log(10)
         elif f == LogB;   return log(v2) / log(v)
+        elif f == Rand;   return rand_range(v, v2)
+        elif f == Min;    return min(v, v2)
+        elif f == Max;    return max(v, v2)
         return 0
     }
 
@@ -110,15 +120,15 @@ class BinaryOp (Expression)
 
     init(Expression^ left, Expression^ right, Token op)
     {
-        self->left = left
-        self->right = right
-        self->op = op
+        self.left = left
+        self.right = right
+        self.op = op
     }
 
     func eval(double x) : double
     {
-        double l = self.left->eval(x)
-        double r = self.right->eval(x)
+        double l = self.left.eval(x)
+        double r = self.right.eval(x)
         Token op = self.op
 
         if op == Plus; return l + r
@@ -158,21 +168,21 @@ class Value (Expression)
 
     init(double val)
     {
-        self->val = val
-        self->isvar = no
+        self.val = val
+        self.isvar = no
     }
 
     func eval(double x) : double
     {
-        if self->isvar
+        if self.isvar
             return x
-        return self->val
+        return self.val
     }
 
     func render() : byte*
     {
         byte* mem = malloc(20)
-        sprintf(mem, '%lf', self->val)
+        sprintf(mem, '%lf', self.val)
         return mem
     }
 }
@@ -184,3 +194,13 @@ func arg_count(BuiltinFunction f) : byte
     return 1
 }
 
+func rand_range(double a, double b) : double
+{
+    var n = min(a, b)
+    var x = max(a, b)
+
+    var diff = x - n
+    var num = rand() % diff
+
+    return n + num
+}

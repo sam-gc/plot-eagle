@@ -82,7 +82,7 @@ class PointerStack
         self.head = next
 
         -- TODO: The following fails
-        -- self.head = self.head.next
+        -- >>> self.head = self.head.next
         -- I believe this is due to the value of
         -- self.head being decremented before it
         -- can be read for the assignment

@@ -10,4 +10,6 @@ extern func tan(double) : double
 extern func fabs(double) : double
 extern func nan(byte*) : double
 extern func isnan(double) : int
+extern func isinf(double) : int
 extern func log(double) : double
+extern func time(any*) : int

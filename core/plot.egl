@@ -16,6 +16,7 @@ class Plot
     Arraylist^ functions
     int mouseX
     Color backgcol
+    Color tancol
     Color axescol
     TTF_Font* font
 
@@ -32,6 +33,7 @@ class Plot
         self.xtick = self.ytick = -1
         
         memset(&self.backgcol, 0, sizeof(Color))
+        memset(&self.tancol, 255, sizeof(Color))
         memset(&self.axescol, 150, sizeof(Color))
     }
 
@@ -119,6 +121,7 @@ class Plot
             return
 
         int drawx = self.winfo.width - 10
+        int drawy = self.winfo.height - 5
 
         for int i = 0; i < self.functions.count; i += 1
         {
@@ -134,11 +137,16 @@ class Plot
 
                 var c = f.color
 
-                -- extern func ne_render_text(TTF_Font*, byte*, byte, byte, byte) : SDL_Surface*
                 SDL_Surface* surf = ne_render_text(self.font, coords, c.r, c.g, c.b)
                 drawx -= surf.w
 
-                self.surface.blit(surf, drawx, self.winfo.height - 5 - surf.h)
+                if drawx < 0
+                {
+                    drawx = self.winfo.width - 10 - surf.w
+                    drawy -= surf.h + 5
+                }
+
+                self.surface.blit(surf, drawx, drawy - surf.h)
                 drawx -= 10
 
                 SDL_FreeSurface(surf)
@@ -266,6 +274,7 @@ class Plot
 
                 var texpr = gen_tangent(f.source, x)
                 var tangent = new Function(texpr, self.winfo)
+                tangent.color = self.tancol
                 self.drawFunction(tangent)
             }
         }
@@ -276,6 +285,11 @@ class Plot
         var back = new Rect(0, 0, self.winfo.width, self.winfo.height)
         var c = self.backgcol
         self.surface.fillRect(back, c.r, c.g, c.b, no)
+    }
+
+    func saveToFile(byte* filename)
+    {
+        SDL_SaveBMP(self.surface.raw(), filename)
     }
 
     func render()

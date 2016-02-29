@@ -33,7 +33,7 @@ class Function
             pmap(winfo, &x, nil)
             self.values[i] = e.eval(x)
 
-            if !isnan(self.values[i]) && !hasFoundNonNan
+            if !isnan(self.values[i]) && !isinf(self.values[i]) && !hasFoundNonNan
             {
                 hasFoundNonNan = yes
                 self.firstNonNan = self.values[i]
@@ -54,7 +54,7 @@ class Function
         double max = self.firstNonNan
         for var i = 1; i < self.vcount; i += 1
         {
-            if isnan(self.values[i])
+            if isnan(self.values[i]) || isinf(self.values[i])
                 continue
 
             if self.values[i] > max
@@ -69,7 +69,7 @@ class Function
         double min = self.firstNonNan
         for var i = 1; i < self.vcount; i += 1
         {
-            if isnan(self.values[i])
+            if isnan(self.values[i]) || isinf(self.values[i])
                 continue
 
             if self.values[i] < min

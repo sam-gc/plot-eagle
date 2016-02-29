@@ -60,7 +60,7 @@ func parse(byte* str) : Expression^
             operands.push(val)
         }
         elif tok == Identifier
-            ph_handle_function(&h)
+            ph_handle_identifier(&h)
         elif tok == ParenR
             ph_paren_r(&h)
         elif tok == Comma
@@ -82,7 +82,7 @@ func parse(byte* str) : Expression^
     return operands.pop()
 }
 
-func ph_handle_function(ParserHelper* h)
+func ph_handle_identifier(ParserHelper* h)
 {
     var buf = h.lexer.buffer
     var f   = BuiltinFunction.Invalid
@@ -94,9 +94,18 @@ func ph_handle_function(ParserHelper* h)
     elif strequ(buf, 'ArcCos'); f = ArcCos
     elif strequ(buf, 'ArcTan'); f = ArcTan
     elif strequ(buf, 'LogB'); f = LogB
+    elif strequ(buf, 'Rand'); f = Rand
+    elif strequ(buf, 'Log');  f = Log
+    elif strequ(buf, 'Ln');   f = Ln
+    elif strequ(buf, 'Min');  f = Min
+    elif strequ(buf, 'Max');  f = Max
 
     if f == Invalid
     {
+        if   strequ(buf, 'pi') { h.operands.push(new Value(3.14159265359)); return; }
+        elif strequ(buf, 'e')  { h.operands.push(new Value(2.71828182846)); return; }
+
+        puts 'Yikes!'
         0 -- TODO: Error...
     }
 

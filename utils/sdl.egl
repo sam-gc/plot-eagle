@@ -14,6 +14,8 @@ extern func SDL_FillRect(any*, any*, int) : int
 extern func SDL_MapRGB(any*, byte, byte, byte) : int
 extern func SDL_WaitEvent(any*) : int
 extern func SDL_UpperBlit(any*, any*, any*, any*)
+extern func SDL_SaveBMP_RW(SDL_Surface*, any*, int) : int
+extern func SDL_RWFromFile(byte*, byte*) : any*
 extern func TTF_Init() : int
 extern func TTF_OpenFont(byte*, int) : TTF_Font*
 extern func TTF_CloseFont(TTF_Font*)
@@ -196,5 +198,10 @@ func event_mouse_coords(Event* e, short* x, short* y)
 
         y^ = bref^
     }
+}
+
+func SDL_SaveBMP(SDL_Surface* s, byte* name)
+{
+    SDL_SaveBMP_RW(s, SDL_RWFromFile(name, 'wb'), 1)
 }
 
