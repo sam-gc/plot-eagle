@@ -10,16 +10,6 @@ import ../arithmetic/parser.egl
 import ../arithmetic/functions.egl
 import plot.egl
 
-func test_lexer(byte* text, byte* where)
-{
-    WindowInfo winfo
-    fill_winfo(&winfo, 800, 600)
-
-    var exp = parse(text)
-    var f   = new Function(exp, &winfo)
-    puts f.values[0]
-}
-
 func main(int argc, byte** argv) : int
 {
     if argc < 2
@@ -32,19 +22,27 @@ func main(int argc, byte** argv) : int
     TTF_Init()
 
     WindowInfo winfo
-    fill_winfo(&winfo, 800, 800)
+    build_winfo(argv, &winfo)
 
     var screen = new Surface(winfo.width, winfo.height)
     screen.openAsWindow()
 
     var plot = new Plot(&winfo, screen)
-    plot.addExpression(parse(argv[1]))
+    -- plot.addExpression(parse(argv[1]))
 
-    if argc > 2
-        plot.addExpression(parse(argv[2]))
-    -- plot.resizeWinfo()
-    plot.render()
+    for int i = 1; i < argc; i += 2
+    {
+        int ct
+        var f = build_function(argv + i, &ct, &winfo)
+        i += ct
+        plot.addFunction(f)
+    }
+
+    if !winfo.aspect
+        plot.resizeWinfo()
+
     plot.useFont('AnonPro.ttf')
+    plot.render()
 
     Event event
     event.type = UserEvent
@@ -70,4 +68,71 @@ func main(int argc, byte** argv) : int
 
     return 0
 }
+
+func build_winfo(byte** args, WindowInfo* winfo)
+{
+    fill_winfo(winfo, 640, 480)
+
+    for args^
+    {
+        var arg = args^
+        if strequ(arg, '--aspect')
+            winfo.aspect = yes
+        if strequ(arg, '--width')
+        {
+            args += 1
+            winfo.width = atoi(args^)
+        }
+        if strequ(arg, '--height')
+        {
+            args += 1
+            winfo.height = atoi(args^)
+        }
+
+        args += 1
+    }
+
+    sanitize_winfo(winfo)
+}
+
+func build_function(byte** args, int* ct, WindowInfo* winfo) : Function^
+{
+    if !args^
+        return nil
+
+    Function^ f = new Function(parse(args^), winfo)
+    int read = 0
+    args += 1
+
+    for args^ && !strequ(args^, '-f')
+    {
+        read += 1
+
+        var arg = args^
+        if strequ(arg, '--color')
+        {
+            args += 1
+            read += 1
+            byte r; byte g; byte b
+            sscanf(args^, '%d,%d,%d', &r, &g, &b)
+            f.color.r = r
+            f.color.g = g
+            f.color.b = b
+        }
+        elif strequ(arg, '--discreet')
+            f.discreet = yes
+        elif strequ(arg, '--tangent')
+            f.drawTangents = yes
+        elif strequ(arg, '--static')
+            f.ustatic = yes
+
+        args += 1
+    }
+
+    if ct
+        ct^ = read
+
+    return f
+}
+
 

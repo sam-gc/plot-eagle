@@ -167,10 +167,9 @@ extern func vdprintf(int, byte*, int) : int
 extern func dprintf(int, byte*) : int
 extern func fscanf(FILE*, byte*) : int
 extern func scanf(byte*) : int
-extern func sscanf(byte*, byte*) : int
+extern func sscanf(byte*, byte*...) : int
 extern func fscanf(FILE*, byte*) : int
 extern func scanf(byte*) : int
-extern func sscanf(byte*, byte*) : int
 extern func fgetc(FILE*) : int
 extern func getc(FILE*) : int
 extern func getchar() : int

@@ -13,6 +13,8 @@ struct WindowInfo
     double ymin; double ymax
 
     double width; double height
+
+    bool aspect
 }
 
 func print_exponent(double d) : bool
@@ -106,6 +108,20 @@ func fill_winfo(WindowInfo* winfo, double width, double height)
     winfo.ymax = 15
     winfo.height = height
     winfo.width = width
+    winfo.aspect = no
+}
+
+func sanitize_winfo(WindowInfo* winfo)
+{
+    if !winfo.aspect
+        return
+
+    var xwidth = winfo.xmax - winfo.xmin
+    var ratio = winfo.width / winfo.height
+
+    var yheight = xwidth / ratio
+    winfo.ymin = -yheight / 2
+    winfo.ymax = yheight / 2
 }
 
 gen window_x_coords(WindowInfo* winfo) : int

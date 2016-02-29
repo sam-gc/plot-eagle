@@ -11,6 +11,7 @@ class Function
     int         vcount
     bool        discreet
     bool        ustatic
+    bool        drawTangents
     Expression^ source
     Color       color
     double      firstNonNan
@@ -21,6 +22,7 @@ class Function
         self.vcount = winfo.width
         self.discreet = no
         self.ustatic  = no
+        self.drawTangents = no
         self.firstNonNan = 0
 
         var hasFoundNonNan = no

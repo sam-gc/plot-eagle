@@ -70,7 +70,7 @@ class Plot
         {
             Function^ f = self.functions.get(i)
 
-            if !isnan(f.values[self.mouseX])
+            if !isnan(f.values[self.mouseX]) && !f.ustatic
             {
                 var y = f.values[self.mouseX]
                 double x = self.mouseX
@@ -142,6 +142,11 @@ class Plot
         self.functions.append(new Function(e, self.winfo))
     }
 
+    func addFunction(Function^ f)
+    {
+        self.functions.append(f)
+    }
+
     func resizeWinfo()
     {
         double max = (Function^@self.functions.get(0)).max()
@@ -183,7 +188,7 @@ class Plot
             Function^ f = self.functions.get(i)
             double y = f.values[self.mouseX]
 
-            if isnan(y)
+            if isnan(y) || f.ustatic
                 continue
 
             unmap(self.winfo, nil, &y)
@@ -200,7 +205,7 @@ class Plot
         {
             Function^ f = self.functions.get(i)
 
-            if !isnan(f.values[self.mouseX])
+            if !isnan(f.values[self.mouseX]) && f.drawTangents
             {
                 double x = self.mouseX
                 pmap(self.winfo, &x, nil)
