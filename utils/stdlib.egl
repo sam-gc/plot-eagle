@@ -23,11 +23,6 @@ typedef long __nlink_t
 typedef long __off_t
 typedef long __off64_t
 typedef int __pid_t
-extern struct __fsid_t
-{
-    int[2] __val
-}
-typedef __fsid_t __fsid_t
 typedef long __clock_t
 typedef long __rlim_t
 typedef long __rlim64_t
@@ -95,7 +90,6 @@ typedef __u_int u_int
 typedef __u_long u_long
 typedef __quad_t quad_t
 typedef __u_quad_t u_quad_t
-typedef __fsid_t fsid_t
 typedef __loff_t loff_t
 typedef __ino_t ino_t
 typedef __dev_t dev_t
