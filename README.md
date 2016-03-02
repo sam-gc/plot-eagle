@@ -12,3 +12,11 @@ Below is an example of graph output:
 
 ![A quick function]
 (/trig.png?raw=true "Sin(x), Cos(x), Rand(Sin(x), Cos(x))")
+
+Running
+------
+For now it is advisable to simply use the source code as a guide for parameter
+options. In the current state it would be required to both compile the Eagle
+compiler as well as the code in this repository to run this plotter. Rather
+it is more interesting to browse the code to get a feeling for the language
+itself.
