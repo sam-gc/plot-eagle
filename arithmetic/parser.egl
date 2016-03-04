@@ -149,7 +149,6 @@ func ph_paren_r(ParserHelper* h)
 func ph_handle_infix(ParserHelper* h)
 {
     var operators = h.operators
-    var operands  = h.operands
     var tok = h.tok
 
     var top = operators.top()
