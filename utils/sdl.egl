@@ -104,10 +104,12 @@ class Surface
 
     func clear(bool flip)
     {
-        SDL_Rect rect
-        rect.x = rect.y = 0
-        rect.w = self.w
-        rect.h = self.h
+        var rect = SDL_Rect {
+            .x = 0
+            .y = 0
+            .w = self.w
+            .h = self.h
+        }
 
         SDL_FillRect(self.surf, &rect, SDL_MapRGB(self.surf.format, 0, 0, 0))
         if flip
@@ -116,11 +118,12 @@ class Surface
 
     func blit(SDL_Surface* surf, int x, int y)
     {
-        SDL_Rect dstr
-        dstr.x = x
-        dstr.y = y
-        dstr.w = 0
-        dstr.h = 0
+        var dstr = SDL_Rect {
+            .x = x
+            .y = y
+            .w = 0
+            .h = 0
+        }
 
         SDL_UpperBlit(surf, nil, self.surf, &dstr)
     }

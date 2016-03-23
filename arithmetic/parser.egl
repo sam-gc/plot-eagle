@@ -39,10 +39,11 @@ func parse(byte* str) : Expression^
     var operands = new PointerStack()
     var operators = new TokenStack()
 
-    ParserHelper h
-    h.operators = operators
-    h.operands = operands
-    h.lexer = lexer
+    var h = ParserHelper {
+        .operators = operators
+        .operands  = operands
+        .lexer     = lexer
+    }
 
     operators.push(Sentinel)
 

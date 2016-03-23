@@ -54,8 +54,10 @@ func main(int argc, byte** argv) : int
     if winfo.outfile
         plot.saveToFile(winfo.outfile)
 
-    Event event
-    event.type = UserEvent
+    var event = Event {
+        .type = UserEvent
+    }
+
     for event.type != Quit
     {
         wait_event(&event)

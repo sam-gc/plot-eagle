@@ -318,29 +318,33 @@ func connect_the_dots(SDL_Rect* pt, double last)
 
 func draw_crosshairs_at(Surface^ s, int x, int y, byte r, byte g, byte b)
 {
-    SDL_Rect top
-    top.x = x
-    top.y = y - 5
-    top.w = 1
-    top.h = 5
+    var top = SDL_Rect {
+        .x = x
+        .y = y - 5
+        .w = 1
+        .h = 5
+    }
 
-    SDL_Rect right
-    right.x = x + 1
-    right.y = y
-    right.w = 5
-    right.h = 1
+    var right = SDL_Rect {
+        .x = x + 1
+        .y = y
+        .w = 5
+        .h = 1
+    }
 
-    SDL_Rect bottom
-    bottom.x = x
-    bottom.y = y + 1
-    bottom.w = 1
-    bottom.h = 5
+    var bottom = SDL_Rect {
+        .x = x
+        .y = y + 1
+        .w = 1
+        .h = 5
+    }
 
-    SDL_Rect left
-    left.x = x - 5
-    left.y = y
-    left.w = 5
-    left.h = 1
+    var left = SDL_Rect {
+        .x = x - 5
+        .y = y
+        .w = 5
+        .h = 1
+    }
 
     s.fillSDL_Rect(&top, r, g, b, no)
     s.fillSDL_Rect(&right, r, g, b, no)
@@ -370,3 +374,4 @@ func gen_tangent(Expression^ e, double x) : Expression^
 
     return add
 } 
+

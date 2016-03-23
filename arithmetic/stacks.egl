@@ -64,9 +64,11 @@ class PointerStack
 
     func push(any^ val)
     {
-        var node = new PointerStackNode
-        node.val = val
-        node.next = self.head
+        var node = new PointerStackNode({
+            .val  = val
+            .next = self.head
+        })
+
         self.head = node
         self.count += 1
     }
