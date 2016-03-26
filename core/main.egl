@@ -10,6 +10,7 @@
 import ../utils/sdl.egl
 import ../utils/misc.egl
 import ../utils/math.egl
+import ../utils/termargs.egl
 import ../arithmetic/lexer.egl
 import ../arithmetic/parser.egl
 import ../arithmetic/functions.egl
@@ -20,30 +21,53 @@ func main(int argc, byte** argv) : int
     srand(time(nil))
     if argc < 2
     {
-        printf('Usage: %s <expression>\n', argv[0])
+        printf('Usage: %s -f <expression> [options]\n', argv[0])
         return 0
     }
+
+    WindowInfo winfo
+    fill_winfo(&winfo, 640, 480)
+
+    var plot = new Plot(nil, nil)
+
+    var winfo_args = make_winfo_args(&winfo)
+    var plot_args  = make_plot_args(plot) 
+    var func_args  = make_func_args(plot, &winfo)
+
+
+    if strequ(argv[1], '--help')
+    {
+        printf('Usage: %s -f <expression> [options]\n', argv[0])
+        puts 'Window Arguments:'
+        winfo_args.help()
+
+        puts '\nPlot Arguments:'
+        plot_args.help()
+
+        puts '\nFunction Arguments:'
+        func_args.help()
+
+        return 0
+    }
+
+    -*
+    if !strequ(argv[1], '--plot')
+    {
+        -- TODO: Jump into interactive mode
+        return 0
+    }
+    *-
+
+    winfo_args.run(argv)
+    plot_args.run(argv)
+    func_args.run(argv)
 
     SDL_Init(sh_init_everything())
     TTF_Init()
 
-    WindowInfo winfo
-    build_winfo(argv, &winfo)
-
-    var screen = new Surface(winfo.width, winfo.height)
-    screen.openAsWindow()
-
-    var plot = new Plot(&winfo, screen)
-    setup_plot(argv, plot)
-    -- plot.addExpression(parse(argv[1]))
-
-    for int i = 1; i < argc; i += 2
-    {
-        int ct
-        var f = build_function(argv + i, &ct, &winfo)
-        i += ct
-        plot.addFunction(f)
-    }
+    plot.winfo = &winfo
+    plot.surface = new Surface(winfo.width, winfo.height)
+    plot.surface.openAsWindow()
 
     if !winfo.aspect && !winfo.manualy
         plot.resizeWinfo()
@@ -78,128 +102,164 @@ func main(int argc, byte** argv) : int
 
     SDL_Quit()
 
+    __dec get_shared_variables() -- Clean up the static variable manually
+
     return 0
 }
 
-func build_winfo(byte** args, WindowInfo* winfo)
+func make_winfo_args(WindowInfo* winfo) : TermArgs^
 {
-    fill_winfo(winfo, 640, 480)
-
-    for args^
-    {
-        var arg = args^
-        if strequ(arg, '--aspect')
+    var args = new TermArgs()
+    args.rule('--aspect', nil, 'Set X and Y axes on the same scale',
+        func(byte* arg, byte* next, bool* skip) {
+            arg; next; skip
             winfo.aspect = yes
-        elif strequ(arg, '--window')
-        {
-            args += 1
+        })
+
+    args.rule('--window', '--window w,h', 'Set window size; cancels --yrange',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
             int w
             int h
-            sscanf(args^, '%d,%d', &w, &h)
-            winfo.width = w
-            winfo.height = h
-        }
-        elif strequ(arg, '--xrange')
-        {
-            args += 1
+            sscanf(next, '%d,%d', &w, &h)
+            winfo.width = w; winfo.height = h
+            skip^ = yes
+        })
+
+    args.rule('--xrange', '--xrange min,max', 'Set the X range the plot shows',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
             double n
             double x
-            sscanf(args^, '%lf,%lf', &n, &x)
+            sscanf(next, '%lf,%lf', &n, &x)
             winfo.xmin = n
             winfo.xmax = x
-        }
-        elif strequ(arg, '--yrange')
-        {
-            args += 1
+            skip^ = yes
+        })
+
+    args.rule('--yrange', '--yrange min,max', 'Set the Y range the plot shows',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
             double n
             double x
-            sscanf(args^, '%lf,%lf', &n, &x)
+            sscanf(next, '%lf,%lf', &n, &x)
             winfo.ymin = n
             winfo.ymax = x
-            winfo.manualy = yes
-        }
-        elif strequ(arg, '--render')
-        {
-            args += 1
-            winfo.outfile = args^
-        }
+            skip^ = yes
+        })
 
-        args += 1
-    }
+    args.rule('--render', '--render outfile', 'Render the plot to a bitmap [outfile]',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            winfo.outfile = next
+            skip^ = yes
+        })
 
-    sanitize_winfo(winfo)
+    return args
 }
 
-func setup_plot(byte** args, Plot^ p)
+func make_plot_args(Plot^ p) : TermArgs^
 {
-    for args^
-    {
-        var arg = args^
-        if strequ(arg, '--axes-color')
-        {
-            args += 1
-            read_color(args^, &p.axescol)
-        }
-        elif strequ(arg, '--bg-color')
-        {
-            args += 1
-            read_color(args^, &p.backgcol)
-        }
-        elif strequ(arg, '--tangent-color')
-        {
-            args += 1
-            read_color(args^, &p.tancol)
-        }
-        elif strequ(arg, '--xtick')
-        {
-            args += 1
-            p.xtick = atof(args^)
-        }
-        elif strequ(arg, '--ytick')
-        {
-            args += 1
-            p.ytick = atof(args^)
-        }
+    var args = new TermArgs()
+    args.rule('--axes-color', '--axes-color r,g,b', 'Specify the color for the axes',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            read_color(next, &p.axescol)
+            skip^ = yes
+        })
 
-        args += 1
-    }
+    args.rule('--bg-color', '--bg-color r,g,b', 'Specify the background color',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            read_color(next, &p.backgcol)
+            skip^ = yes
+        })
+
+    args.rule('--tangent-color', '--tangent-color r,g,b', 'Specify the color of tangent lines',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            read_color(next, &p.tancol)
+            skip^ = yes
+        })
+
+    args.rule('--xtick', '--xtick interval', 'Specify the interval between tick marks on the X axes',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            p.xtick = atof(next)
+            skip^ = yes
+        })
+
+    args.rule('--ytick', '--ytick interval', 'Specify the interval between tick marks on the Y axes',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            p.ytick = atof(next)
+            skip^ = yes
+        })
+
+    return args
 }
 
-func build_function(byte** args, int* ct, WindowInfo* winfo) : Function^
+func make_func_args(Plot^ p, WindowInfo* winfo) : TermArgs^
 {
-    if !args^
-        return nil
+    Function^ cf = nil
 
-    Function^ f = new Function(parse(args^), winfo)
-    int read = 0
-    args += 1
+    var args = new TermArgs()
 
-    for args^ && !strequ(args^, '-f')
-    {
-        read += 1
-
-        var arg = args^
-        if strequ(arg, '--color')
+    var test_error = func(byte *arg) {
+        if !cf
         {
-            args += 1
-            read += 1
-
-            read_color(args^, &f.color)
+            printf('Error: No function specified for argument %s\n', arg)
+            exit(0)
         }
-        elif strequ(arg, '--discreet')
-            f.discreet = yes
-        elif strequ(arg, '--tangent')
-            f.drawTangents = yes
-        elif strequ(arg, '--static')
-            f.ustatic = yes
-
-        args += 1
     }
 
-    if ct
-        ct^ = read
+    args.rule('-f', '-f expression', 'Specify a new function with the given expression',
+        func(byte* arg, byte* next, bool* skip) {
+            arg
+            if cf
+                p.addFunction(cf)
 
-    return f
+            cf = new Function(parse(next), winfo)
+            skip^ = yes
+        })
+
+    args.rule('--color', '--color r,g,b', 'Set the color of the function',
+        func(byte* arg, byte* next, bool* skip) {
+            test_error(arg)
+            read_color(next, &cf.color)
+            skip^ = yes
+        })
+
+    args.rule('--discreet', nil, 'Plot the function as discreet points',
+        func(byte* arg, byte* next, bool* skip) {
+            next
+            test_error(arg)
+            cf.discreet = yes
+            skip^ = no
+        })
+
+    args.rule('--tangent', nil, 'Draw tangent lines when mousing over function',
+        func(byte* arg, byte* next, bool* skip) {
+            next
+            test_error(arg)
+            cf.drawTangents = yes
+            skip^ = no
+        })
+
+    args.rule('--static', nil, 'Do not draw cross hairs or coordinates for function',
+        func(byte* arg, byte* next, bool* skip) {
+            next
+            test_error(arg)
+            cf.ustatic = yes
+            skip^ = no
+        })
+
+    args.onend = func() {
+        if cf
+            p.addFunction(cf)
+    }
+
+    return args
 }
 
 func read_color(byte* fmt, Color* c)

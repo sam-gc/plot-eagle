@@ -22,6 +22,7 @@ enum Token
     Mult
     Div
     Plus
+    Equals
     Minus         -- Infix subtraction operator
     UMinus        -- Prefix negation operator
     Pow
@@ -175,6 +176,8 @@ func is_simple_token(byte c) : bool
         return yes
     if c == `^` || c == `,`
         return yes
+    if c == `=`
+        return yes
 
     return no
 }
@@ -193,6 +196,8 @@ func is_alpha(byte c) : bool
 {
     if c >= `a` && c <= `z`
         return yes
+    elif c == `!` || c == `_`
+        return yes
     return c >= `A` && c <= `Z`
 }
 
@@ -202,7 +207,7 @@ func is_binary_operator(Token t) : bool
         return yes
     if t == Mult || t == Div
         return yes
-    if t == Pow
+    if t == Pow  || t == Equals
         return yes
     return no
 }
@@ -226,6 +231,7 @@ func map_simple_token(byte c) : Token
     if c == `/`; return Div
     if c == `^`; return Pow
     if c == `,`; return Comma
+    if c == `=`; return Equals
     return Invalid
 }
 

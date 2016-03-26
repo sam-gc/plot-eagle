@@ -242,6 +242,7 @@ extern func wcstombs(byte*, int*, int) : int
 extern func rpmatch(byte*) : int
 extern func getsubopt(byte**, byte**, byte**) : int
 extern func malloc(long) : any*
+extern func calloc(long, long) : any*
 extern func memcpy(any*, any*, long) : any*
 extern func realloc(any*, long) : any*
 extern func round(double) : double

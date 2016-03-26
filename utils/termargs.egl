@@ -1,0 +1,123 @@
+export *
+import hashtable.egl
+import arraylist.egl
+import stdio.egl
+import stdlib.egl
+import misc.egl
+
+typedef (byte*, byte*, bool* :)^ rule_callback
+
+struct ArgBundle
+{
+    rule_callback callback
+    byte* help
+    byte* arg
+}
+
+class ConstString
+{
+    byte* buf
+
+    init(byte* buf)
+    {
+        self.buf = buf
+    }
+
+    view byte*
+    {
+        return self.buf
+    }
+}
+
+class TermArgs
+{
+    HashTable^ rules
+    Arraylist^ rule_order
+
+    rule_callback seive
+
+    (:)^ onend
+
+    init()
+    {
+        self.rules = new HashTable()
+        self.rule_order = new Arraylist()
+    }
+
+    func rule(byte* rule, byte* fmt, byte* help, rule_callback callback)
+    {
+        if strequ(rule, '*')
+        {
+            self.seive = callback
+            return
+        }
+
+        if !fmt
+            fmt = rule
+
+        self.rules.put(rule, new ArgBundle({
+            .callback = callback
+            .help     = help
+            .arg      = fmt
+        }))
+
+        self.rule_order.append(new ConstString(rule))
+
+        var len = strlen(fmt)
+        if len > get_shared_maxlen()^
+            get_shared_maxlen()^ = len
+    }
+
+    func help()
+    {
+        var rules = self.rules
+        var maxlen = get_shared_maxlen()^
+
+        for int i = 0; i < self.rule_order.count; i += 1
+        {
+            ConstString^ str = self.rule_order.get(i)
+            ArgBundle^ bun = rules.get(str)
+            printf('  %s', bun.arg)
+            print_spaces(maxlen - strlen(bun.arg) + 2)
+            printf('%s\n', bun.help)
+        }
+    }
+
+    func run(byte** args)
+    {
+        for args; args^; args += 1
+        {
+            var skip = no
+            ArgBundle^ bun = self.rules.get(args^)
+
+            if bun
+                bun.callback(args^, (args + 1)^, &skip)
+            elif self.seive
+                self.seive(args^, (args + 1)^, &skip)
+
+            if skip
+                args += 1
+        }
+
+        if self.onend
+            self.onend()
+    }
+}
+
+func print_spaces(int ct)
+{
+    byte* text = calloc(ct + 1, 1)
+    memset(text, ` `, ct)
+
+    printf('%s', text)
+
+    free(text)
+}
+
+func get_shared_maxlen() : int*
+{
+    static int maxlen
+
+    return &maxlen
+}
+

@@ -39,11 +39,10 @@ func parse(byte* str) : Expression^
     var operands = new PointerStack()
     var operators = new TokenStack()
 
-    var h = ParserHelper {
-        .operators = operators
-        .operands  = operands
-        .lexer     = lexer
-    }
+    ParserHelper h
+    h.operators = operators
+    h.operands = operands
+    h.lexer = lexer
 
     operators.push(Sentinel)
 
@@ -54,7 +53,8 @@ func parse(byte* str) : Expression^
 
         if tok == Number
             operands.push(new Value(atof(lexer.buffer)))
-        elif tok == Identifier && !strcmp(lexer.buffer, 'x')
+        elif tok == Identifier && 
+             (strequ(lexer.buffer, 'x') || strequ(lexer.buffer, '!'))
         {
             var val = new Value(0.0)
             val.isvar = yes
@@ -98,16 +98,25 @@ func ph_handle_identifier(ParserHelper* h)
     elif strequ(buf, 'Rand'); f = Rand
     elif strequ(buf, 'Log');  f = Log
     elif strequ(buf, 'Ln');   f = Ln
+    elif strequ(buf, 'Sqrt'); f = Sqrt
     elif strequ(buf, 'Min');  f = Min
     elif strequ(buf, 'Max');  f = Max
 
     if f == Invalid
     {
+        -*
         if   strequ(buf, 'pi') { h.operands.push(new Value(3.14159265359)); return; }
         elif strequ(buf, 'e')  { h.operands.push(new Value(2.71828182846)); return; }
 
-        puts 'Yikes!'
-        0 -- TODO: Error...
+        double^ v = h.variables.get(buf)
+        if v
+        {
+            h.operands.push(new Value(v^))
+            return
+        }
+        *-
+        h.operands.push(new Variable(buf))
+        return
     }
 
     h.operators.push(Token@f)
@@ -203,6 +212,8 @@ func prec(Token t) : Precedence
 {
     if t == Sentinel
         return Zero
+    if t == Equals
+        return VeryLow
     if t == Plus || t == Minus
         return Low
     if t == Mult || t == Div
