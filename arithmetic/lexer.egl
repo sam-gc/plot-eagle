@@ -1,4 +1,7 @@
-export *
+export *_operator
+export Lexer*
+export Token
+export Lexer
 
 import ../utils/stdlib.egl
 import ../utils/stdio.egl
