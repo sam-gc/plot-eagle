@@ -3,8 +3,10 @@ import ../utils/math.egl
 import ../utils/stdlib.egl
 import ../utils/misc.egl
 import ../utils/hashtable.egl
-export *
 
+export (class) '*'
+
+export
 interface Expression
 {
     func eval(double) : double
@@ -12,6 +14,7 @@ interface Expression
     func set(double)
 }
 
+export
 enum BuiltinFunction
 {
     Invalid : 100 -- Start where Token ends
@@ -255,6 +258,7 @@ class Variable (Expression)
     }
 }
 
+export
 func arg_count(BuiltinFunction f) : byte
 {
     if f > TwoParam
@@ -273,6 +277,7 @@ func rand_range(double a, double b) : double
     return n + num
 }
 
+export
 func get_shared_variables() : HashTable^
 {
     static HashTable^ h

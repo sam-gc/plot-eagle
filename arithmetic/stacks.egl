@@ -1,5 +1,7 @@
 import lexer.egl
-export *
+
+export (class) '*'
+export (struct) '*'
 
 extern func __egl_print_count(any^)
 

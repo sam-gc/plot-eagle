@@ -1,4 +1,4 @@
-export *
+export '*'
 
 extern func pow(double, double) : double
 extern func asin(double) : double

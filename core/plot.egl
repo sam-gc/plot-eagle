@@ -5,10 +5,9 @@ import ../utils/misc.egl
 import ../utils/arraylist.egl
 import ../arithmetic/functions.egl
 
-export *
-
 extern func __egl_print_count(any^)
 
+export
 class Plot
 {
     WindowInfo* winfo

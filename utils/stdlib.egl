@@ -1,4 +1,4 @@
-export *
+export '*'
 typedef byte __u_char
 typedef short __u_short
 typedef int __u_int

@@ -1,6 +1,6 @@
 import misc.egl
 
-export *
+export '*'
 
 typedef any TTF_Font
 

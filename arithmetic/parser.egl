@@ -5,7 +5,7 @@ import ../utils/string.egl
 import ../utils/stdlib.egl
 import ../utils/misc.egl
 
-export *
+export 'parse'
 
 struct ParserHelper
 {

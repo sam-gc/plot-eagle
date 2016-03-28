@@ -2,7 +2,7 @@ import stdlib.egl
 import string.egl
 import misc.egl
 
-export *
+export (class) '*'
 
 func hst_djb2(byte* key) : long
 {

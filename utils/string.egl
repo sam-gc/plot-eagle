@@ -1,4 +1,4 @@
-export *
+export '*'
 extern func memccpy(any*, any*, int, int) : any*
 extern func strcpy(byte*, byte*) : byte*
 extern func strlen(byte*) : long

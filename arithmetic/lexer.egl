@@ -1,12 +1,10 @@
-export *_operator
-export Lexer*
-export Token
-export Lexer
+export (func) '*_operator'
 
 import ../utils/stdlib.egl
 import ../utils/stdio.egl
 import ../utils/string.egl
 
+export
 enum LexerStatus
 {
     Valid
@@ -14,6 +12,7 @@ enum LexerStatus
     Finished
 }
 
+export
 enum Token
 {
     Identifier
@@ -37,6 +36,7 @@ enum Token
     Builtin : 100 -- Used to allow pushing the BuiltinFunction enum onto the stack
 }
 
+export
 class Lexer
 {
     byte* src

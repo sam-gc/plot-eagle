@@ -1,10 +1,10 @@
-export *
 import hashtable.egl
 import arraylist.egl
 import stdio.egl
 import stdlib.egl
 import misc.egl
 
+export
 typedef (byte*, byte*, bool* :)^ rule_callback
 
 struct ArgBundle
@@ -29,6 +29,7 @@ class ConstString
     }
 }
 
+export
 class TermArgs
 {
     HashTable^ rules

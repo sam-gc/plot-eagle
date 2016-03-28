@@ -3,7 +3,7 @@ import string.egl
 import math.egl
 import ../arithmetic/expressions.egl
 
-export *
+export '*'
 
 extern func ne_binary_path(byte*, int)
 

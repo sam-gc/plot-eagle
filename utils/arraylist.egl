@@ -1,8 +1,7 @@
 import stdio.egl
 import stdlib.egl
 
-export *
-
+export
 class Arraylist
 {
     any** items
