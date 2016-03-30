@@ -15,7 +15,7 @@ struct WindowInfo
     double width; double height
 
     bool aspect
-    bool manualy
+    bool manually
 
     byte* outfile
 }
@@ -113,7 +113,7 @@ func fill_winfo(WindowInfo* winfo, double width, double height)
         .height = height
         .width = width
         .aspect = no
-        .manualy = no
+        .manually = no
         
         .outfile = nil
     }

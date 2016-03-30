@@ -15,25 +15,32 @@ import ../arithmetic/lexer.egl
 import ../arithmetic/parser.egl
 import ../arithmetic/functions.egl
 import plot.egl
+import term.egl
 
 func main(int argc, byte** argv) : int
 {
     srand(time(nil))
-    if argc < 2
-    {
-        printf('Usage: %s -f <expression> [options]\n', argv[0])
-        return 0
-    }
+    SDL_Init(sh_init_everything())
+    TTF_Init()
 
     WindowInfo winfo
     fill_winfo(&winfo, 640, 480)
 
-    var plot = new Plot(nil, nil)
+    var plot = get_shared_plot()
 
     var winfo_args = make_winfo_args(&winfo)
     var plot_args  = make_plot_args(plot) 
     var func_args  = make_func_args(plot, &winfo)
 
+    plot.useFont('AnonPro.ttf')
+
+    if argc < 2
+    {
+        -- printf('Usage: %s -f <expression> [options]\n', argv[0])
+        interactive()
+        dec_shared_vars()
+        return 0
+    }
 
     if strequ(argv[1], '--help')
     {
@@ -62,17 +69,12 @@ func main(int argc, byte** argv) : int
     plot_args.run(argv)
     func_args.run(argv)
 
-    SDL_Init(sh_init_everything())
-    TTF_Init()
-
     plot.winfo = &winfo
     plot.surface = new Surface(winfo.width, winfo.height)
     plot.surface.openAsWindow()
 
-    if !winfo.aspect && !winfo.manualy
-        plot.resizeWinfo()
+    plot.resizeWinfo()
 
-    plot.useFont('AnonPro.ttf')
     plot.render()
 
     if winfo.outfile
@@ -102,7 +104,7 @@ func main(int argc, byte** argv) : int
 
     SDL_Quit()
 
-    __dec get_shared_variables() -- Clean up the static variable manually
+    dec_shared_vars() -- Clean up static variables manually
 
     return 0
 }
@@ -134,6 +136,7 @@ func make_winfo_args(WindowInfo* winfo) : TermArgs^
             sscanf(next, '%lf,%lf', &n, &x)
             winfo.xmin = n
             winfo.xmax = x
+            winfo.manually = yes
             skip^ = yes
         })
 
@@ -145,6 +148,7 @@ func make_winfo_args(WindowInfo* winfo) : TermArgs^
             sscanf(next, '%lf,%lf', &n, &x)
             winfo.ymin = n
             winfo.ymax = x
+            winfo.manually = yes
             skip^ = yes
         })
 
@@ -272,5 +276,11 @@ func read_color(byte* fmt, Color* c)
     c.r = r
     c.g = g
     c.b = b
+}
+
+func dec_shared_vars()
+{
+    __dec get_shared_variables()
+    __dec get_shared_plot()
 }
 

@@ -210,6 +210,28 @@ class Plot
 
     func resizeWinfo()
     {
+        var winfo = self.winfo
+
+        if !winfo.aspect && !winfo.manually
+        {
+            self.automaticWinfo()
+            return
+        }
+
+        var ratio = winfo.width / winfo.height
+
+        var totalx = winfo.xmax - winfo.xmin
+        var totaly = totalx / ratio
+        puts totaly
+        int ymin = -totaly / 2
+        int ymax = ymin + totaly
+
+        winfo.ymin = ymin
+        winfo.ymax = ymax
+    }
+
+    func automaticWinfo()
+    {
         double max = (Function^@self.functions.get(0)).max()
         double min = (Function^@self.functions.get(0)).min()
 
@@ -301,6 +323,16 @@ class Plot
         self.drawCoords()
         self.commit()
     }
+}
+
+export
+func get_shared_plot() : Plot^
+{
+    static Plot^ plot
+    if !plot
+        plot = new Plot(nil, nil)
+
+    return plot
 }
 
 func connect_the_dots(SDL_Rect* pt, double last)

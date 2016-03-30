@@ -4,7 +4,7 @@ import misc.egl
 
 export (class) '*'
 
-func hst_djb2(byte* key) : long
+func djb2(byte* key) : long
 {
     int hash = 5381
     for byte c = key[0]; c; key += 1
@@ -127,7 +127,7 @@ class HashTable
         if self.count + 1 > self.bcount * 0.66
             self.resize()
 
-        long hash = hst_djb2(key)
+        long hash = djb2(key)
         long mod = hash % self.bcount
 
         if(!self.buckets[mod])
@@ -157,7 +157,7 @@ class HashTable
 
     func get(byte* key) : any^
     {
-        long hash = hst_djb2(key)
+        long hash = djb2(key)
         long mod = hash % self.bcount
 
         for var n = self.gb(mod); n; n = n.next

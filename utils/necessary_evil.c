@@ -36,3 +36,23 @@ SDL_Surface *ne_render_text(TTF_Font *font, char *text, char r, char g, char b)
     return TTF_RenderText_Solid(font, text, col);
 }
 
+void print_yellow()
+{
+    printf("\033[1;36m");
+}
+
+void print_blue()
+{
+    printf("\033[1;34m");
+}
+
+void print_default()
+{
+    printf("\033[0m");
+}
+
+char *prompt()
+{
+    return "\033[1;34m> \033[0m";
+}
+
