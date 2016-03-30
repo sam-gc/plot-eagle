@@ -1,0 +1,88 @@
+import sdl.egl
+import stdlib.egl
+export (struct) '*'
+export (func)   'chan*'
+
+struct ChannelNode
+{
+    ChannelNode* next
+    ChannelNode* prev
+    any* data
+}
+
+struct Channel
+{
+    ChannelNode* head
+    ChannelNode* last
+
+    SDL_mutex* lock
+}
+
+func chan_create() : Channel*
+{
+    Channel* chan = malloc(sizeof(Channel))
+    chan^ = {
+        .lock = SDL_CreateMutex()
+    }
+
+    return chan
+}
+
+func chan_destroy(Channel* chan)
+{
+    SDL_DestroyMutex(chan.lock)
+
+    var node = chan.head
+    for node
+    {
+        var next = node.next
+        free(node)
+        node = next
+    }
+
+    free(chan)
+}
+
+func chan_send(Channel* chan, any* data)
+{
+    var node = create_node(data)
+    SDL_LockMutex(chan.lock)
+    if !chan.head
+        chan.head = chan.last = node
+    else
+        chan.last.next = node
+    SDL_UnlockMutex(chan.lock)
+}
+
+func chan_poll(Channel* chan) : any*
+{
+    ChannelNode* node
+
+    SDL_LockMutex(chan.lock)
+    if !chan.head
+        node = nil
+    else
+    {
+        node = chan.head
+        chan.head = chan.head.next
+    }
+    SDL_UnlockMutex(chan.lock)
+
+    if !node
+        return nil
+
+    var data = node.data
+    free(node)
+    return data
+}
+
+func create_node(any* data) : ChannelNode*
+{
+    ChannelNode* node = malloc(sizeof(ChannelNode))
+    node^ = {
+        .data = data
+    }
+
+    return node
+}
+
