@@ -3,6 +3,7 @@ import misc.egl
 export '*'
 
 typedef any TTF_Font
+typedef any SDL_mutex
 
 extern func SDL_Init(int)
 extern func SDL_SetVideoMode(int, int, int, int) : SDL_Surface*
@@ -16,6 +17,10 @@ extern func SDL_WaitEvent(any*) : int
 extern func SDL_UpperBlit(any*, any*, any*, any*)
 extern func SDL_SaveBMP_RW(SDL_Surface*, any*, int) : int
 extern func SDL_RWFromFile(byte*, byte*) : any*
+extern func SDL_CreateMutex() : SDL_mutex*
+extern func SDL_DestroyMutex(SDL_mutex*)
+extern func SDL_mutexP(SDL_mutex*) : int
+extern func SDL_mutexV(SDL_mutex*) : int
 extern func TTF_Init() : int
 extern func TTF_OpenFont(byte*, int) : TTF_Font*
 extern func TTF_CloseFont(TTF_Font*)
@@ -206,6 +211,16 @@ func event_mouse_coords(Event* e, short* x, short* y)
 
         y^ = bref^
     }
+}
+
+func SDL_LockMutex(SDL_mutex *m)
+{
+    SDL_mutexP(m)
+}
+
+func SDL_UnlockMutex(SDL_mutex *m)
+{
+    SDL_mutexV(m)
 }
 
 func SDL_SaveBMP(SDL_Surface* s, byte* name)
