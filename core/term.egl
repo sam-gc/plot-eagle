@@ -1,0 +1,45 @@
+extern func rl_abort(int, int) : int
+extern func rl_bind_key(int, [int, int : int]*) : int
+extern func readline(byte*) : byte*
+extern func add_history(byte*)
+extern func print_yellow()
+extern func print_blue()
+extern func print_default()
+extern func prompt() : byte*
+
+import ../utils/stdio.egl
+import ../utils/misc.egl
+import ../arithmetic/parser.egl
+
+export func interactive()
+{
+    byte* buf
+
+    var pr = prompt()
+    var last = 0.0
+
+    for (buf = readline(pr))
+    {
+        if strequ(buf, 'quit')
+            break
+
+        if strlen(buf) > 0
+        {
+            add_history(buf)
+
+            var expr = parse(buf)
+            print_yellow()
+            last = expr.eval(last)
+            pprint(last)
+            print_default()
+
+            puts ''
+        }
+    }
+
+    free(buf)
+    
+    -- This is a static variable so we need to
+    -- take care of freeing it
+}
+
