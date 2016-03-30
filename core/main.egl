@@ -280,7 +280,7 @@ func read_color(byte* fmt, Color* c)
 
 func dec_shared_vars()
 {
-    __dec get_shared_variables()
+    __dec get_global_scope_manager()
     __dec get_shared_plot()
 }
 

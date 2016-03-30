@@ -16,7 +16,7 @@ export func interactive()
     byte* buf
 
     var pr = prompt()
-    var last = 0.0
+    InterpValue^ last = new NumberValue(0)
 
     for (buf = readline(pr))
     {
@@ -29,8 +29,8 @@ export func interactive()
 
             var expr = parse(buf)
             print_yellow()
-            last = expr.eval(last)
-            pprint(last)
+            last = expr.eval(last.asNumber())
+            last.print()
             print_default()
 
             puts ''

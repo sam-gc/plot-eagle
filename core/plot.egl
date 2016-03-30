@@ -222,7 +222,6 @@ class Plot
 
         var totalx = winfo.xmax - winfo.xmin
         var totaly = totalx / ratio
-        puts totaly
         int ymin = -totaly / 2
         int ymax = ymin + totaly
 
@@ -387,9 +386,9 @@ func gen_tangent(Expression^ e, double x) : Expression^
 {
     var resolution = 0.0001
 
-    var back   = e.eval(x - resolution)
-    var front  = e.eval(x + resolution)
-    var center = e.eval(x)
+    var back   = e.eval(x - resolution).asNumber()
+    var front  = e.eval(x + resolution).asNumber()
+    var center = e.eval(x).asNumber()
 
     var slope = (front - back) / (resolution * 2)
     -- y = mx + b

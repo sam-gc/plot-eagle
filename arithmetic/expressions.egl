@@ -1,4 +1,6 @@
 import lexer.egl
+import values.egl
+import scope.egl
 import ../utils/math.egl
 import ../utils/stdlib.egl
 import ../utils/misc.egl
@@ -9,9 +11,9 @@ export (class) '*'
 export
 interface Expression
 {
-    func eval(double) : double
+    func eval(double) : InterpValue^
     func render() : byte*
-    func set(double)
+    func set(InterpValue^)
 }
 
 export
@@ -34,6 +36,8 @@ enum BuiltinFunction
     Rand
     Min
     Max
+
+    NParam : 1000  -- User-defined functions
 }
 
 class FunctionCall (Expression)
@@ -49,13 +53,21 @@ class FunctionCall (Expression)
         self.f = f
     }
 
-    func eval(double x) : double
+    func eval(double v) : InterpValue^
     {
-        double v = self.value1.eval(x)
+        if self.f < NParam
+            return new NumberValue(self.evalNumeric(v))
+
+        return nil
+    }
+
+    func evalNumeric(double x) : double
+    {
+        double v = self.value1.eval(x).asNumber()
         double v2
 
         if self.value2
-            v2 = self.value2.eval(x)
+            v2 = self.value2.eval(x).asNumber()
 
         var f = self.f
 
@@ -81,7 +93,7 @@ class FunctionCall (Expression)
         return nil
     }
 
-    func set(double x)
+    func set(InterpValue^ x)
     {
         x
         puts 'Error: Cannot set expression type'
@@ -100,13 +112,17 @@ class UnaryOp (Expression)
         self.op = op
     }
 
-    func eval(double x) : double
+    func eval(double x) : InterpValue^
     {
-        double v = self.value.eval(x)
+        var val = self.value.eval(x)
+        if val.type() != Number
+            return nil
+
+        double v = self.value.eval(x).asNumber()
         Token op = self.op
 
-        if op == UMinus; return -v
-        return 0
+        if op == UMinus; return new NumberValue(-v)
+        return nil
     }
 
     func render() : byte*
@@ -123,7 +139,7 @@ class UnaryOp (Expression)
         return me
     }
 
-    func set(double x)
+    func set(InterpValue^ x)
     {
         x
         puts 'Error: Cannot set expression type'
@@ -144,24 +160,32 @@ class BinaryOp (Expression)
         self.op = op
     }
 
-    func eval(double x) : double
+    func eval(double x) : InterpValue^
     {
-        double l = self.left.eval(x)
-        double r = self.right.eval(x)
+        var lval = self.left.eval(x)
+        var rval = self.right.eval(x)
+
+        if lval.type() != Number || rval.type() != Number
+            return nil
+
+        double l = lval.asNumber()
+        double r = rval.asNumber()
         Token op = self.op
 
-        if op == Plus; return l + r
-        if op == Minus; return l - r
-        if op == Mult; return l * r
-        if op == Div; return l / r
-        if op == Pow; return pow(l, r)
+        double num
+
+        if op == Plus; num = l + r
+        if op == Minus; num = l - r
+        if op == Mult; num = l * r
+        if op == Div; num = l / r
+        if op == Pow; num = pow(l, r)
         if op == Equals
         {
-            self.left.set(r)
-            return r
+            self.left.set(new NumberValue(r))
+            return new NumberValue(r)
         }
-
-        return 0.0
+        
+        return new NumberValue(num)
     }
 
     func render() : byte*
@@ -184,7 +208,7 @@ class BinaryOp (Expression)
         return me
     }
 
-    func set(double x)
+    func set(InterpValue^ x)
     {
         x
         puts 'Error: Cannot set expression type'
@@ -193,19 +217,20 @@ class BinaryOp (Expression)
 
 class Value (Expression)
 {
-    double val
+    InterpValue^ val
     bool   isvar
 
     init(double val)
     {
-        self.val = val
+        self.val = new NumberValue(val)
         self.isvar = no
     }
 
-    func eval(double x) : double
+    func eval(double x) : InterpValue^
     {
         if self.isvar
-            return x
+            return new NumberValue(x)
+
         return self.val
     }
 
@@ -216,7 +241,7 @@ class Value (Expression)
         return mem
     }
 
-    func set(double x)
+    func set(InterpValue^ x)
     {
         x
         puts 'Error: Cannot set expression type'
@@ -237,14 +262,10 @@ class Variable (Expression)
         free(self.name)
     }
 
-    func eval(double x) : double
+    func eval(double x) : InterpValue^
     {
         x
-        double^ val = get_shared_variables().get(self.name)
-        if val
-            return val^
-
-        return 0.0
+        return get_global_scope_manager().lookup(self.name)
     }
 
     func render() : byte*
@@ -252,9 +273,9 @@ class Variable (Expression)
         return strdup(self.name)
     }
 
-    func set(double x)
+    func set(InterpValue^ x)
     {
-        get_shared_variables().put(self.name, new double(x))
+        get_global_scope_manager().set(self.name, x)
     }
 }
 
@@ -275,19 +296,5 @@ func rand_range(double a, double b) : double
     var num = rand() % diff
 
     return n + num
-}
-
-export
-func get_shared_variables() : HashTable^
-{
-    static HashTable^ h
-    if !h
-    {
-        h = new HashTable()
-        h.put('pi', new double(3.14159265359))
-        h.put('e',  new double(2.71828182846))
-    }
-
-    return h
 }
 

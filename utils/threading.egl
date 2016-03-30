@@ -58,18 +58,13 @@ func chan_poll(Channel* chan) : any*
 {
     ChannelNode* node
 
-    SDL_LockMutex(chan.lock)
-    if !chan.head
-        node = nil
-    else
-    {
-        node = chan.head
-        chan.head = chan.head.next
-    }
-    SDL_UnlockMutex(chan.lock)
-
-    if !node
+    if !chan.head -- This is thread unsafe if multiple threads are polling
         return nil
+
+    SDL_LockMutex(chan.lock)
+    node = chan.head
+    chan.head = chan.head.next
+    SDL_UnlockMutex(chan.lock)
 
     var data = node.data
     free(node)

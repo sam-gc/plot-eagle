@@ -31,7 +31,7 @@ class Function
         {
             double x = i
             pmap(winfo, &x, nil)
-            self.values[i] = e.eval(x)
+            self.values[i] = e.eval(x).asNumber()
 
             if !isnan(self.values[i]) && !isinf(self.values[i]) && !hasFoundNonNan
             {

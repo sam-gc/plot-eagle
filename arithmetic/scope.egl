@@ -1,0 +1,66 @@
+import values.egl
+import stacks.egl
+import ../utils/hashtable.egl
+
+-- The top-level scope is pre-pushed
+export
+class ScopeManager
+{
+    PointerStack^ stack
+
+    init(bool withConsts)
+    {
+        self.stack = new PointerStack()
+
+        var global = new HashTable()
+
+        if withConsts
+        {
+            global.put('pi', new NumberValue(3.14159265359))
+            global.put('e',  new NumberValue(2.71828182846))
+        }
+
+        self.stack.push(global)
+    }
+
+    func push()
+    {
+        self.stack.push(new HashTable())
+    }
+
+    func pop()
+    {
+        self.stack.pop()
+    }
+
+    func lookup(byte* name) : InterpValue^
+    {
+        InterpValue^ val = nil
+        for int i = 0; !val; i += 1
+        {
+            HashTable^ table = self.stack.get(i)
+            if !table -- Variable not found...
+                return nil
+            val = table.get(name)
+        }
+
+        return val
+    }
+
+    func set(byte* name, InterpValue^ v)
+    {
+        HashTable^ table = self.stack.get(0)
+        table.put(name, v)
+    }
+}
+
+export
+func get_global_scope_manager() : ScopeManager^
+{
+    static ScopeManager^ sm
+    if !sm
+        sm = new ScopeManager(yes)
+
+    return sm
+}
+

@@ -1,0 +1,64 @@
+import ../utils/stdio.egl
+import ../utils/misc.egl
+import ../utils/string.egl
+
+export '*'
+
+enum ValueType
+{
+    Number
+    String
+    UserFunc
+}
+
+interface InterpValue
+{
+    func type() : ValueType
+    func asNumber() : double
+    func asString() : byte*
+    func print()
+}
+
+class NumberValue (InterpValue)
+{
+    double val
+
+    init(double val)
+    {
+        self.val = val
+    }
+
+    func type() : ValueType { return Number; }
+    func asNumber() : double { return self.val; }
+    func asString() : byte* { return nil; }
+
+    func print()
+    {
+        pprint(self.val)
+    }
+}
+
+class StringValue (InterpValue)
+{
+    byte* buf
+
+    init(byte* str)
+    {
+        self.buf = strdup(str)
+    }
+
+    destruct()
+    {
+        free(self.buf)
+    }
+
+    func type() : ValueType { return String; }
+    func asNumber() : double { return 0.0; }
+    func asString() : byte* { return self.buf; }
+
+    func print()
+    {
+        printf('%s', self.buf)
+    }
+}
+
