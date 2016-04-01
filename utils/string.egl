@@ -28,3 +28,40 @@ extern func strsignal(int) : byte*
 extern func __stpcpy(byte*, byte*) : byte*
 extern func stpcpy(byte*, byte*) : byte*
 extern func __stpncpy(byte*, byte*, int) : byte*
+
+import stdlib.egl
+
+class String
+{
+    byte* buf
+    init(byte* buf)
+    {
+        self.buf = strdup(buf)
+    }
+
+    destruct()
+    {
+        free(self.buf)
+    }
+
+    view byte*
+    {
+        return self.buf
+    }
+}
+
+class ConstString
+{
+    byte* buf
+
+    init(byte* buf)
+    {
+        self.buf = buf
+    }
+
+    view byte*
+    {
+        return self.buf
+    }
+}
+

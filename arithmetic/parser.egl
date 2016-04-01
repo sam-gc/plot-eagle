@@ -138,18 +138,16 @@ func ph_paren_r(ParserHelper* h)
     {
         var f   = BuiltinFunction@h.operators.pop()
 
-        byte args = arg_count(f)
-        Expression^ val1 = nil
-        Expression^ val2 = nil
+        int args = arg_count(f)
 
-        val1 = h.operands.pop()
-        if args > 1
+        Arraylist^ list = new Arraylist(3)
+
+        for int i = 0; i < args; i += 1
         {
-            val2 = val1
-            val1 = h.operands.pop()
+            list.append(h.operands.pop())
         }
 
-        h.operands.push(new FunctionCall(f, val1, val2))
+        h.operands.push(new FunctionCall(f, list))
     }
 }
 

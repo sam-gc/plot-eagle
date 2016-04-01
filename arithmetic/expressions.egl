@@ -5,6 +5,7 @@ import ../utils/math.egl
 import ../utils/stdlib.egl
 import ../utils/misc.egl
 import ../utils/hashtable.egl
+import ../utils/arraylist.egl
 
 export (class) '*'
 
@@ -42,14 +43,12 @@ enum BuiltinFunction
 
 class FunctionCall (Expression)
 {
-    Expression^     value1
-    Expression^     value2
+    Arraylist^ values
     BuiltinFunction f
 
-    init(BuiltinFunction f, Expression^ value1, Expression^ value2)
+    init(BuiltinFunction f, Arraylist^ values)
     {
-        self.value1 = value1
-        self.value2 = value2
+        self.values = values
         self.f = f
     }
 
@@ -58,33 +57,54 @@ class FunctionCall (Expression)
         if self.f < NParam
             return new NumberValue(self.evalNumeric(v))
 
+
+
+        -*
+        var scope = get_global_scope_manager()
+        scope.push()
+
+        for int i = 0; i < self.values.count; i += 1
+        {
+            String^ str = 
+            scope.set(self.values
+        }
+        *-
+
         return nil
     }
 
     func evalNumeric(double x) : double
     {
-        double v = self.value1.eval(x).asNumber()
+        double v
         double v2
 
-        if self.value2
-            v2 = self.value2.eval(x).asNumber()
+        Expression^ val1 = self.values.get(0)
+        v = val1.eval(x).asNumber()
 
-        var f = self.f
+        if self.values.count > 1
+        {
+            Expression^ val2 = self.values.get(1)
+            v2 = val2.eval(x).asNumber()
+        }
 
-        if   f == Sin;    return sin(v)
-        elif f == Cos;    return cos(v)
-        elif f == Tan;    return tan(v)
-        elif f == Abs;    return fabs(v)
-        elif f == ArcSin; return asin(v)
-        elif f == ArcCos; return acos(v)
-        elif f == ArcTan; return atan(v)
-        elif f == Ln;     return log(v)
-        elif f == Log;    return log(v) / log(10)
-        elif f == Sqrt;   return sqrt(v)
-        elif f == LogB;   return log(v2) / log(v)
-        elif f == Rand;   return rand_range(v, v2)
-        elif f == Min;    return min(v, v2)
-        elif f == Max;    return max(v, v2)
+        switch self.f
+        {
+            case Sin;    return sin(v)
+            case Cos;    return cos(v)
+            case Tan;    return tan(v)
+            case Abs;    return fabs(v)
+            case ArcSin; return asin(v)
+            case ArcCos; return acos(v)
+            case ArcTan; return atan(v)
+            case Ln;     return log(v)
+            case Log;    return log(v) / log(10)
+            case Sqrt;   return sqrt(v)
+            case LogB;   return log(v2) / log(v)
+            case Rand;   return rand_range(v, v2)
+            case Min;    return min(v, v2)
+            case Max;    return max(v, v2)
+        }
+
         return 0
     }
 
@@ -280,8 +300,10 @@ class Variable (Expression)
 }
 
 export
-func arg_count(BuiltinFunction f) : byte
+func arg_count(BuiltinFunction f) : int
 {
+    if f >= NParam
+        return int@f - int@BuiltinFunction.NParam
     if f > TwoParam
         return 2
     return 1

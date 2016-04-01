@@ -88,17 +88,16 @@ func main(int argc, byte** argv) : int
     {
         wait_event(&event)
 
-        if event.type == MouseMotion
+        switch event.type
         {
-            short x
-            event_mouse_coords(&event, &x, nil)
-            plot.mouseX = x
-            plot.render()
-        }
-        elif event.type == ActiveEvent -- Called when mouse leaves the window
-        {
-            plot.mouseX = -1
-            plot.render()
+            case MouseMotion
+                short x
+                event_mouse_coords(&event, &x, nil)
+                plot.mouseX = x
+                plot.render()
+            case ActiveEvent
+                plot.mouseX = -1
+                plot.render()
         }
     }
 

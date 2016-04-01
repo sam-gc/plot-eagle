@@ -1,13 +1,14 @@
 import ../utils/stdio.egl
 import ../utils/misc.egl
 import ../utils/string.egl
+import ../utils/arraylist.egl
 
 export '*'
 
 enum ValueType
 {
     Number
-    String
+    UserString
     UserFunc
 }
 
@@ -16,6 +17,7 @@ interface InterpValue
     func type() : ValueType
     func asNumber() : double
     func asString() : byte*
+    func asExpression() : Expression^
     func print()
 }
 
@@ -31,6 +33,7 @@ class NumberValue (InterpValue)
     func type() : ValueType { return Number; }
     func asNumber() : double { return self.val; }
     func asString() : byte* { return nil; }
+    func asExpression() : Expression^ { return nil; }
 
     func print()
     {
@@ -52,13 +55,41 @@ class StringValue (InterpValue)
         free(self.buf)
     }
 
-    func type() : ValueType { return String; }
+    func type() : ValueType { return UserString; }
     func asNumber() : double { return 0.0; }
     func asString() : byte* { return self.buf; }
+    func asExpression() : Expression^ { return nil; }
 
     func print()
     {
         printf('%s', self.buf)
+    }
+}
+
+class FunctionValue(InterpValue)
+{
+    Expression^ expr
+    Arraylist^ args
+
+    init(Expression^ expr, Arraylist^ args)
+    {
+        self.expr = expr
+        self.args = args
+    }
+
+    func type() : ValueType { return UserFunc; }
+    func asNumber() : double { return 0.0; }
+    func asString() : byte* { return nil; }
+    func asExpression() : Expression^ { return self.expr; }
+
+    func numArgs() : int
+    {
+        return self.args.count
+    }
+
+    func print()
+    {
+        printf('[Expression object]')
     }
 }
 

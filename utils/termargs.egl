@@ -3,6 +3,7 @@ import arraylist.egl
 import stdio.egl
 import stdlib.egl
 import misc.egl
+import string.egl
 
 export
 typedef (byte*, byte*, bool* :)^ rule_callback
@@ -12,21 +13,6 @@ struct ArgBundle
     rule_callback callback
     byte* help
     byte* arg
-}
-
-class ConstString
-{
-    byte* buf
-
-    init(byte* buf)
-    {
-        self.buf = buf
-    }
-
-    view byte*
-    {
-        return self.buf
-    }
 }
 
 export
